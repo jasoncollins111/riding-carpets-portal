@@ -5,18 +5,19 @@ import {
   AppBar,
   Avatar,
   Box, 
-  Button,
   Menu,
-  // MenuIcon,
   MenuItem, 
   IconButton,
   Link,
   Toolbar,
-  // Tooltip,
   Typography
 } from '@mui/material';
 
-const pages = [{link: '/songs', title: 'Songs'}, {link: '/setlists', title: 'Setlists'}, {link: '/forum', title: 'Forum'}];
+const pages = [
+  { link: '/setlists', title: 'Setlists' },
+  { link: '/songs', title: 'Songs' },
+  // { link: '/forum', title: 'Forum' }
+];
 const settings = [{ link: "add-song", title: "Add Song" }, { link: "add-setlist", title: "Add Setlist" }];
 
 export default function Header() {
@@ -59,31 +60,6 @@ export default function Header() {
         >
           RidingCarpets.net
         </Typography>
-
-        {/* <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            open={Boolean(anchorElNav)}
-            onClose={handleCloseNavMenu}
-            sx={{ display: { xs: 'block', md: 'none' } }}
-          >
-            {pages.map((page) => (
-              <MenuItem key={page.title} onClick={handleCloseNavMenu}>
-                <Link href={page.link} sx={{ textAlign: 'center' }}>{page.title}</Link>
-              </MenuItem>
-            ))}
-          </Menu>
-        </Box> */}
 
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {pages.map((page) => (

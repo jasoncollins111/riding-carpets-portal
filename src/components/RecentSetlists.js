@@ -14,21 +14,23 @@ import axios from 'axios';
 
 export default function RecentSetlists() {
 
-  const [showList, setShowList] = useState([]);
-  const [showSetlist, setShowSetlist] = useState([]);
+  const [concertList, setConcertList] = useState([]);
+  const [concertSetlist, setConcertSetlist] = useState([]);
 
   useEffect(() => {
-    getShows();
+    getConcerts();
   },[])
 
-  async function getShows() {
-    const result = await axios.get('/api/get-shows');
-    const shows = result?.data?.shows?.rows;
-    setShowList(shows);
+  async function getConcerts() {
+    const result = await axios.get('/api/get-concerts');
+    const concerts = result?.data?.shows?.rows;
+    console.log('concerts', concerts);
+    setConcertList(concerts);
+    // getSetlist(concerts[0]);
   }
 
-  async function getSetlist(show) {
-    const { id } = show;
+  async function getSetlist(concert) {
+    const { id } = concert;
     try {
       const setlist = await axios.get("/api/get-setlist", {
         params: {
@@ -36,7 +38,7 @@ export default function RecentSetlists() {
         }
       });
       const songs = setlist?.data?.response?.rows;
-      setShowSetlist(songs);
+      setConcertSetlist(songs);
     } catch (error) {
       console.log('error', error);
     }
@@ -58,10 +60,10 @@ export default function RecentSetlists() {
     let formattedDate = `${month}/${day}/${year}`;
     return formattedDate;
   }
-
+  console.log("concertList", concertList);
   return (
     <Box sx={{ml: "50px"}}>
-      <Typography level="h1">Latest Shows</Typography>
+      <Typography level="h1">Latest Concerts</Typography>
       <Sheet
       variant="outlined"
       sx={{
@@ -73,11 +75,11 @@ export default function RecentSetlists() {
     >
       <List>
         <ListItem nested>
-          <ListSubheader sticky>Shows</ListSubheader>
+          <ListSubheader sticky>Concerts</ListSubheader>
           <List>
-            {showList.map((show, idx) => (
+            {concertList.map((concert, idx) => (
               <ListItem key={idx}>
-                <ListItemButton color="primary" onClick={() => getSetlist(show)}>{formatDate(show.date)} - {show.venue} {show.city}, {show.state}</ListItemButton>
+                <ListItemButton color="primary" onClick={() => getSetlist(concert)}>{formatDate(concert.date)} - {concert.venue} {concert.city}, {concert.state}</ListItemButton>
               </ListItem>
             ))}
           </List>
@@ -95,12 +97,12 @@ export default function RecentSetlists() {
         }}
       >
         {
-          showSetlist.length ? (
+          concertSetlist.length ? (
             <List>
               <ListItem nested>
                 <ListSubheader sticky>Setlist</ListSubheader>
                 <List>
-                  {showSetlist.map((song, idx) => (
+                  {concertSetlist.map((song, idx) => (
                     <ListItem key={idx}>{song.song_name}</ListItem>
                   ))}
                 </List>
