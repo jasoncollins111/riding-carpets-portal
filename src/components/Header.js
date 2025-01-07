@@ -18,7 +18,7 @@ const pages = [
   { link: '/songs', title: 'Songs' },
   // { link: '/forum', title: 'Forum' }
 ];
-const settings = [{ link: "add-song", title: "Add Song" }, { link: "add-setlist", title: "Add Setlist" }];
+const settings = [{ link: "add-song", title: "Add Song" }, { link: "add-show", title: "Add Show" }];
 
 export default function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);

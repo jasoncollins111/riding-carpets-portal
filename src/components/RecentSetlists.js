@@ -14,8 +14,7 @@ import axios from 'axios';
 
 export default function RecentSetlists() {
 
-  const [concertList, setConcertList] = useState([]);
-  const [concertSetlist, setConcertSetlist] = useState([]);
+  const [concertList, setConcertList] = useState([{concert: {}, setlist: []}]);
 
   useEffect(() => {
     getConcerts();
@@ -25,23 +24,27 @@ export default function RecentSetlists() {
     const result = await axios.get('/api/get-concerts');
     const concerts = result?.data?.shows?.rows;
     console.log('concerts', concerts);
-    setConcertList(concerts);
-    // getSetlist(concerts[0]);
+    // setConcertList(concerts);
+    getSetlists(concerts);
   }
 
-  async function getSetlist(concert) {
-    const { id } = concert;
-    try {
-      const setlist = await axios.get("/api/get-setlist", {
-        params: {
-          id
+  async function getSetlists(latestConcerts) {
+    const concertMap = await Promise.all(latestConcerts.map(async (concert) => {
+        const { id } = concert;
+        try {
+          const setlist = await axios.get("/api/get-setlist", {
+            params: {
+              id
+            }
+          });
+          const songs = setlist?.data?.response?.rows;
+          return { concert, setlist: songs };
+        } catch (error) {
+          console.log('error', error);
+          return { concert, setlist: [] };
         }
-      });
-      const songs = setlist?.data?.response?.rows;
-      setConcertSetlist(songs);
-    } catch (error) {
-      console.log('error', error);
-    }
+    }));
+    setConcertList(concertMap);
   }
 
   function formatDate(rawDate) {
@@ -67,49 +70,27 @@ export default function RecentSetlists() {
       <Sheet
       variant="outlined"
       sx={{
-        width: 320,
-        maxHeight: 300,
+        width:'60%',
+        // maxHeight: 300,
         overflow: 'auto',
         borderRadius: 'sm',
       }}
     >
-      <List>
-        <ListItem nested>
-          <ListSubheader sticky>Concerts</ListSubheader>
           <List>
             {concertList.map((concert, idx) => (
               <ListItem key={idx}>
-                <ListItemButton color="primary" onClick={() => getSetlist(concert)}>{formatDate(concert.date)} - {concert.venue} {concert.city}, {concert.state}</ListItemButton>
+                <ListItemButton color="primary" onClick={() => getSetlist(concert)}>
+                  <Box>
+                    {concert.concert.venue} - {concert.concert.city} - {formatDate(concert.concert.date)}
+                    {concert.setlist.map((song, idx) => (
+                      <Typography key={idx} level="body-sm">{song.song_name}</Typography>
+                    ))}
+                  </Box>
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
-        </ListItem>
-      </List>
       
-      </Sheet>
-      <Sheet
-        variant="outlined"
-        sx={{
-          width: 320,
-          maxHeight: 300,
-          overflow: 'auto',
-          borderRadius: 'sm',
-        }}
-      >
-        {
-          concertSetlist.length ? (
-            <List>
-              <ListItem nested>
-                <ListSubheader sticky>Setlist</ListSubheader>
-                <List>
-                  {concertSetlist.map((song, idx) => (
-                    <ListItem key={idx}>{song.song_name}</ListItem>
-                  ))}
-                </List>
-              </ListItem>
-            </List>
-          ) : <sp></sp>
-        }
       </Sheet>
     </Box>
   )
