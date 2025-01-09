@@ -3,7 +3,7 @@ import {
   Typography,
 } from '@mui/joy';
 
-import RecentSetlists from "../../components/RecentSetlists";
+import RecentSetlists from "../components/RecentSetlists";
 
 export default function Home() {
   return (

@@ -6,6 +6,7 @@ import {
   Checkbox,
   Button,
   Input,
+  Sheet,
   Stack,
   Textarea,
   Typography,
@@ -15,6 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {Dayjs} from 'dayjs';
 import axios from 'axios';
+import SetlistCard from '../components/SetlistCard';
 
 export default function addShow() {
   
@@ -56,23 +58,17 @@ export default function addShow() {
     setFilteredSongList(filteredSongs);
   }
 
-  async function addSongToSetlist(event: any) {
-    const { value } = event.target;
-    setSetlist([...setlist, {song_name: value}])
-  }
-
   const addSet = () => {
     console.log('add set')
   }
 
-
+  console.log('setlits', setlist)
   return (
     <Grid container spacing={4} sx={{ height: "100vh", width: "100vw", ml: "50px", mt: "50px", flexGrow: 1, display:"flex" }}>
       <Grid xs={4}>
           <Box sx={{ justifyContent: "center", flexDirection:"column" }} className="flex">
             <Typography level="h1">Add Show</Typography>
-            <Box sx={{}}>
-
+            <Box>
               <FormControl>
                 <Stack spacing={1}>
                 <Input placeholder="Venue" onChange={e => setVenue(e.target.value)}/> 
@@ -153,13 +149,15 @@ export default function addShow() {
                               value="segue"
                               onChange={(e) => {
                                 const { checked } = e.target;
-                                setSetlist(setlist.map(song => {
+                                const setlistUpdate = setlist.reduce((list, song) => {
                                   if (song.song_name === item.song) {
-                                      return {...song, segue: checked}
-                                    }
-                                  }));
-                                } 
-                              }
+                                      song = {...song, segue: checked, transition: false}
+                                  }
+                                  list.push(song)
+                                  return list;
+                                }, []);
+                                setSetlist(setlistUpdate);
+                              }}
                               checked={setlist.find(song=>song.song_name===item.song)?.segue}
                             />
                             <Checkbox
@@ -167,13 +165,16 @@ export default function addShow() {
                               value="transition"
                               onChange={(e) => {
                                 const { checked } = e.target;
-                                setSetlist(setlist.map(song => {
+                                console.log('checked', checked)
+                                const setlistUpdate = setlist.reduce((list,song) => {
                                   if (song.song_name === item.song) {
-                                      return {...song, transition: checked}
-                                    }
-                                  }));
-                                }
-                              }
+                                      song = {...song, segue: false, transition: checked}
+                                  }
+                                  list.push(song);
+                                  return list;
+                                }, []);
+                                setSetlist(setlistUpdate);
+                              }}
                               checked={setlist.find(song=>song.song_name === item.song)?.transition}
                             />
                             </>
@@ -182,7 +183,6 @@ export default function addShow() {
                     );
                   })}
                   <Button onClick={addSet}>Add Set</Button>
-
                   <Button onClick={submitShow}>Submit</Button>
                 </Stack>
               </FormControl>
@@ -190,10 +190,24 @@ export default function addShow() {
           </Box>
       </Grid>
       <Grid xs={8}>
-        <Box sx={{ ml: '50px', justifyContent: "center" }}>
-          <p>Set One:</p>
-          <p>Mad Ones Rave {'->'} Coyotes {'->'} Under the Big Top</p>
-        </Box>
+        {/* <Box sx={{ ml: '50px', justifyContent: "center" }}>
+          <p>Set I:</p>
+          <Sheet sx={{display:'flex'}}>
+            {setlist.map((song,idx) => {
+              let songTransitionSymbol = ',\u00A0';
+              if (song.segue) {
+                songTransitionSymbol = ' ->\u00A0';
+              } else if (song.transition) {
+                songTransitionSymbol = ' >\u00A0';
+              } else if (idx === setlist.length - 1) {
+                songTransitionSymbol = '';
+              }
+              return <p>{song.song_name}{songTransitionSymbol}</p>
+            })}
+
+          </Sheet>
+        </Box> */}
+        <SetlistCard setlist={setlist} setlistTitle="Set I:"/>
       </Grid>
     </Grid>
   )
