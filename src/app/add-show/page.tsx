@@ -6,6 +6,7 @@ import {
   Checkbox,
   Button,
   Input,
+  Link,
   Stack,
   Textarea,
   Typography,
@@ -16,8 +17,9 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {Dayjs} from 'dayjs';
 import axios from 'axios';
 import SetlistCard from '../components/SetlistCard';
+import AddSongModal from '../components/AddSongModal';
 
-export default function addShow() {
+export default function AddShow() {
   
   const [venue, setVenue] = useState<string>('');
   const [city, setCity] = useState<string>('');
@@ -29,6 +31,9 @@ export default function addShow() {
   const [filteredSongList, setFilteredSongList] = useState<Array<any>>([]);
   const [setlist, setSetlist] = useState<Record<string, any[]>>({ "Set One": [], "Set Two": [], "Set Three": [], "Encore": [] });
   const [currentList, setCurrentList] = useState<string>('Set One');
+  const [openSongModal, setOpenSongModal] = useState<boolean>(false);
+  const [song, setSong] = useState<string>('');
+
   useEffect(() => {
     getSongs();
   },[])
@@ -42,7 +47,7 @@ export default function addShow() {
 
   async function submitShow() {
     console.log(setlist);
-    if (venue && city && state && notes && date && setlist.length > 0) {
+    if (venue && city && state && notes && date && setlist.length) {
       // await axios.post("/api/add-show", { venue, city, state, notes, date });
       // await axios.post('/api/add-setlist', { setlist, venue, date });
     }
@@ -59,24 +64,49 @@ export default function addShow() {
   const addPoster = () => {
     console.log('add poster');
   }
-  console.log('setlits', setlist)
+
+  const addSong = (song: string) => {
+    setOpenSongModal(true);
+    setSong(song);
+    // setSetlist({
+    //   ...setlist,
+    //   [currentList]: [...setlist[currentList], {
+    //     song_name: song,
+    //     minutes: 0,
+    //     seconds: 0,
+    //     segue: false,
+    //     transition: false
+    //   }]
+    // });
+  }
+  console.log('setlist', setlist)
   return (
     <Grid container spacing={4} sx={{ height: "100vh", width: "100vw", ml: "50px", mt: "50px", flexGrow: 1, display:"flex" }}>
+      {openSongModal ?
+        <AddSongModal
+          handleOpen={setOpenSongModal}
+          isOpen={openSongModal}
+          song={song}
+          setlist={setlist}
+          title={currentList}
+          setSetlist={setSetlist}
+        /> : null
+      }
       <Grid xs={4}>
-          <Box sx={{ justifyContent: "center", flexDirection:"column" }} className="flex">
-            <Typography level="h1">Add Show</Typography>
-            <Box>
-              <FormControl>
-                <Stack spacing={1}>
-                <Input placeholder="Venue" onChange={e => setVenue(e.target.value)}/> 
-                <Input placeholder="City" onChange={e => setCity(e.target.value)}/>
-                <Input placeholder="State" onChange={e => setState(e.target.value)}/>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Box sx={{ justifyContent: "center", flexDirection:"column" }} className="flex">
+          <Typography level="h1">Add Show</Typography>
+          <Box>
+            <FormControl>
+              <Stack spacing={1}>
+              <Input placeholder="Venue" onChange={e => setVenue(e.target.value)}/> 
+              <Input placeholder="City" onChange={e => setCity(e.target.value)}/>
+              <Input placeholder="State" onChange={e => setState(e.target.value)}/>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
-                </LocalizationProvider>
-                <Textarea minRows={6} placeholder="Notes" onChange={e => setNotes(e.target.value)} />
-                <Box>
-                  {Object.keys(setlist).map((key) => {
+              </LocalizationProvider>
+              <Textarea minRows={6} placeholder="Notes" onChange={e => setNotes(e.target.value)} />
+              <Box>
+                {Object.keys(setlist).map((key) => {
                     return (
                       <Checkbox 
                         key={key}
@@ -86,133 +116,36 @@ export default function addShow() {
                         label={key}
                       />
                     );
-                  })}
-                </Box>
-                  <Input
-                    placeholder="Search songs..."
+                })}
+              </Box>
+              <Input
+                placeholder="Search songs..."
                     onChange={(e) => {
                       e.preventDefault(); 
                       setSearchTerm(e.target.value);
                       searchSongs(e.target.value);
                     }}
                     sx={{ mb: 1 }}
-                    value={searchTerm}
-                  />
-                {filteredSongList.map((item, idx) => {
-                    console.log('setlist list', setlist[currentList])
-                    const isSelected = setlist[currentList].some(setlistSong => setlistSong.song_name === item.song);
-                    return (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} key={idx}>
-                          <Checkbox
-                            label={item.song}
-                            value={item.song}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSetlist({
-                                  ...setlist,
-                                  [currentList]: [...setlist[currentList], {
-                                    song_name: item.song,
-                                    minutes: 0,
-                                    seconds: 0,
-                                    segue: false,
-                                    transition: false
-                                  }]
-                                });
-                              } else {
-                                setSetlist({
-                                  ...setlist,
-                                  [currentList]: setlist[currentList].filter(song => song.song_name !== item.song)
-                                });
-                              }
-                            }}
-                            checked={isSelected}
-                          />
-                          {isSelected && (
-                          <>
-                              <Input
-                                size="sm"
-                                type="number"
-                                placeholder="Min"
-                                sx={{ width: 60 }}
-                                onChange={(e) => {
-                                  const minutes = parseInt(e.target.value);
-                                  setSetlist(setlist.map(song => {
-                                    if (song.song_name === item.song) {
-                                      return { ...song, minutes };
-                                    }
-                                    return song;
-                                  }));
-                                }}
-                                value={setlist[currentList].find(song => song.song_name === item.song)?.minutes || 0}
-                              />
-                              <Input
-                                size="sm" 
-                                type="number"
-                                placeholder="Sec"
-                                sx={{ width: 60 }}
-                                onChange={(e) => {
-                                  const seconds = parseInt(e.target.value);
-                                  setSetlist(setlist.map(song => {
-                                    if (song.song_name === item.song) {
-                                      return { ...song, seconds };
-                                    }
-                                    return song;
-                                  }));
-                                }}
-                                value={setlist[currentList].find(song => song.song_name === item.song)?.seconds || 0}
-                            />
-                            <Checkbox
-                              label="Segue"
-                              value="segue"
-                              onChange={(e) => {
-                                const { checked } = e.target;
-                                const setlistUpdate = setlist[currentList].reduce((list, song) => {
-                                  if (song.song_name === item.song) {
-                                      song = {...song, segue: checked, transition: false}
-                                  }
-                                  list.push(song)
-                                  return list;
-                                }, []);
-                                setSetlist({
-                                  ...setlist,
-                                  [currentList]: setlistUpdate
-                                });
-                              }}
-                              checked={setlist[currentList].find(song=>song.song_name===item.song)?.segue}
-                            />
-                            <Checkbox
-                              label="Transition"
-                              value="transition"
-                              onChange={(e) => {
-                                const { checked } = e.target;
-                                const setlistUpdate = setlist[currentList].reduce((list,song) => {
-                                  if (song.song_name === item.song) {
-                                      song = {...song, segue: false, transition: checked}
-                                  }
-                                  list.push(song);
-                                  return list;
-                                }, []);
-                                setSetlist({
-                                  ...setlist,
-                                  [currentList]: setlistUpdate
-                                });
-                              }}
-                              checked={setlist[currentList].find(song=>song.song_name === item.song)?.transition}
-                            />
-                            </>
-                          )}
-                        </Box>
-                    );
-                  })}
-                  <Button onClick={addPoster}>Add Poster</Button>
-                  <Button onClick={submitShow}>Submit</Button>
-                </Stack>
-              </FormControl>
-            </Box>
-          </Box>
+                value={searchTerm}
+              />
+              {filteredSongList.map((item, idx) => {
+                return (
+                  <Link onClick={()=>addSong(item.song)} key={idx}>{item.song}</Link>
+                )
+              })}
+              <Button onClick={addPoster}>Add Poster</Button>
+              <Button onClick={submitShow}>Submit</Button>
+            </Stack>
+          </FormControl>
+        </Box>
+      </Box>
       </Grid>
       <Grid xs={8}>
-        <SetlistCard setlist={setlist[currentList]} setlistTitle="Set I"/>
+        {Object.keys(setlist).map(key => {
+          return setlist[key].length > 0 && (
+            <SetlistCard key={key} setlist={setlist[key]} setlistTitle={key} />
+          );
+        })}
       </Grid>
     </Grid>
   )

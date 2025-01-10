@@ -18,7 +18,7 @@ export default function SetlistCard({setlist, setlistTitle}) {
           } else if (idx === setlist.length - 1) {
             songTransitionSymbol = '';
           }
-          return <p>{song.song_name}{songTransitionSymbol}</p>
+          return <p key={idx}>{song.song_name}{songTransitionSymbol}</p>
         })}
       </Sheet>
     </Box>
