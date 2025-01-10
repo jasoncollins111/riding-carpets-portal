@@ -10,6 +10,7 @@ import {
   Modal,
   ModalClose,
   Input,
+  Textarea,
   Typography,
   Sheet
 } from '@mui/joy';
@@ -19,7 +20,8 @@ export default function AddSongModal({isOpen, handleOpen, song, setlist, setSetl
   const [seconds, setSeconds] = useState(0);
   const [segue, setSegue] = useState(false);
   const [transition, setTransition] = useState(false);
-
+  const [notes, setNotes] = useState('');
+  
   const addSongToSetlist = () => {
 
     setSetlist({
@@ -112,7 +114,9 @@ export default function AddSongModal({isOpen, handleOpen, song, setlist, setSetl
               checked={transition}
             />
           </Box>
-          </FormControl>
+        </FormControl>
+        <Textarea minRows={6} placeholder="Notes" onChange={e => setNotes(e.target.value)} />
+        
           <Button onClick={addSongToSetlist}>Add Song</Button>
         </Sheet>
       </Modal>

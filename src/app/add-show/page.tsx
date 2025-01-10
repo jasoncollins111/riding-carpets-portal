@@ -68,18 +68,8 @@ export default function AddShow() {
   const addSong = (song: string) => {
     setOpenSongModal(true);
     setSong(song);
-    // setSetlist({
-    //   ...setlist,
-    //   [currentList]: [...setlist[currentList], {
-    //     song_name: song,
-    //     minutes: 0,
-    //     seconds: 0,
-    //     segue: false,
-    //     transition: false
-    //   }]
-    // });
   }
-  console.log('setlist', setlist)
+
   return (
     <Grid container spacing={4} sx={{ height: "100vh", width: "100vw", ml: "50px", mt: "50px", flexGrow: 1, display:"flex" }}>
       {openSongModal ?
@@ -105,6 +95,8 @@ export default function AddShow() {
                   <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
               </LocalizationProvider>
               <Textarea minRows={6} placeholder="Notes" onChange={e => setNotes(e.target.value)} />
+              <Button onClick={addPoster}>Add Poster</Button>
+                
               <Box>
                 {Object.keys(setlist).map((key) => {
                     return (
@@ -133,7 +125,6 @@ export default function AddShow() {
                   <Link onClick={()=>addSong(item.song)} key={idx}>{item.song}</Link>
                 )
               })}
-              <Button onClick={addPoster}>Add Poster</Button>
               <Button onClick={submitShow}>Submit</Button>
             </Stack>
           </FormControl>
