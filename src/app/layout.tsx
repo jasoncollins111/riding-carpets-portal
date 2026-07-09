@@ -6,7 +6,7 @@ import Header from "./components/Header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Riding Carpets — Setlist Manager",
+  title: "Riding Carpets Portal",
   description: "Track shows, songs, and setlists for Riding Carpets.",
 };
 

@@ -1,6 +1,6 @@
-# Deploying Setlist Manager
+# Deploying Riding Carpets Portal
 
-This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://setlist-manager.vercel.app**.
+This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://riding-carpets-portal.vercel.app** (rename the Vercel project from `setlist-manager` if the URL still resolves to the old name).
 
 ## Prerequisites
 
@@ -70,7 +70,7 @@ npm run db:import
 Or trigger via the protected API endpoint after setting `IMPORT_SECRET` in Vercel:
 
 ```bash
-curl -X POST https://setlist-manager.vercel.app/api/import-sheets \
+curl -X POST https://riding-carpets-portal.vercel.app/api/import-sheets \
   -H "Authorization: Bearer YOUR_IMPORT_SECRET"
 ```
 
@@ -84,7 +84,7 @@ Push to `main` on GitHub. Vercel builds on their servers and avoids local CLI ha
 git push origin main
 ```
 
-Monitor the build at https://vercel.com/jasons-projects-b167f2fc/setlist-manager
+Monitor the build at https://vercel.com/jasons-projects-b167f2fc/riding-carpets-portal
 
 ### Alternative: CLI deploy (from local working tree)
 
@@ -100,7 +100,7 @@ Then check status (do not wait on the deploy command itself):
 
 ```bash
 npx vercel@latest inspect <deployment-url>
-npx vercel@latest ls setlist-manager
+npx vercel@latest ls riding-carpets-portal
 ```
 
 If the deploy response shows `"readyState": "BLOCKED"`, production promotion is gated by **Deployment Checks**. Either:
@@ -118,10 +118,10 @@ npx vercel@latest promote <deployment-url> --yes
 ## Post-Deploy Verification
 
 ```bash
-curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://setlist-manager.vercel.app
-curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://setlist-manager.vercel.app/api/shows
-curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://setlist-manager.vercel.app/setlists
-curl -sS -o /dev/null -w "songs: %{http_code}\n" https://setlist-manager.vercel.app/songs
+curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://riding-carpets-portal.vercel.app
+curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://riding-carpets-portal.vercel.app/api/shows
+curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://riding-carpets-portal.vercel.app/setlists
+curl -sS -o /dev/null -w "songs: %{http_code}\n" https://riding-carpets-portal.vercel.app/songs
 ```
 
 All should return `200`. Also test adding a show at `/add-show` and a song at `/add-song`.
@@ -132,7 +132,7 @@ All should return `200`. Also test adding a show at `/add-show` and a song at `/
 |-------|-----|
 | `requires version 47.2.2 or later` | Upgrade Vercel CLI: `npm i -g vercel@latest` |
 | Deploy stuck on `Building…` / status `UNKNOWN` | Kill hung processes: `pkill -f vercel@latest`. Use `--no-wait` on deploy. Check for `"readyState": "BLOCKED"` — promotion is gated by Deployment Checks; Force Promote in dashboard or disable checks |
-| Deploy shows `BLOCKED` | Go to [Vercel dashboard](https://vercel.com/jasons-projects-b167f2fc/setlist-manager) → deployment → Promote to Production, or Project Settings → Deployment Checks |
+| Deploy shows `BLOCKED` | Go to [Vercel dashboard](https://vercel.com/jasons-projects-b167f2fc/riding-carpets-portal) → deployment → Promote to Production, or Project Settings → Deployment Checks |
 | `git push` auth failed | Re-authenticate GitHub (`gh auth login` or update HTTPS token / SSH key), then `git push origin main` |
 | `Missing POSTGRES_URL` | Attach Vercel Postgres storage; run `vercel env pull` |
 | API returns 500 | Run `npm run db:migrate` against production DB |
