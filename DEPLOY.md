@@ -88,19 +88,31 @@ Monitor the build at https://vercel.com/jasons-projects-b167f2fc/setlist-manager
 
 ### Alternative: CLI deploy (from local working tree)
 
-Requires Node 20+ and Vercel CLI 47+. If deploys get stuck on `Building…` with status `UNKNOWN` and 0ms build time, use Git push instead.
-
-```bash
-export PATH="$(brew --prefix node@20)/bin:$PATH"
-npx vercel@latest --prod
-```
-
-Prebuilt deploy (build locally, upload artifacts):
+Requires Node 20+ and Vercel CLI 47+. **Always use `--no-wait`** — without it the CLI hangs forever on `Building…` while the deployment sits in `BLOCKED` state.
 
 ```bash
 export PATH="$(brew --prefix node@20)/bin:$PATH"
 npx vercel@latest build --prod
-npx vercel@latest deploy --prebuilt --prod
+npx vercel@latest deploy --prebuilt --prod --no-wait
+```
+
+Then check status (do not wait on the deploy command itself):
+
+```bash
+npx vercel@latest inspect <deployment-url>
+npx vercel@latest ls setlist-manager
+```
+
+If the deploy response shows `"readyState": "BLOCKED"`, production promotion is gated by **Deployment Checks**. Either:
+
+1. **Force Promote** in the Vercel dashboard (Deployment → ⋮ → Promote to Production), or
+2. Disable/configure Deployment Checks under Project Settings → Deployment Checks, or
+3. Push via Git and let required GitHub Actions pass.
+
+Promote via CLI after checks pass:
+
+```bash
+npx vercel@latest promote <deployment-url> --yes
 ```
 
 ## Post-Deploy Verification
@@ -119,7 +131,9 @@ All should return `200`. Also test adding a show at `/add-show` and a song at `/
 | Issue | Fix |
 |-------|-----|
 | `requires version 47.2.2 or later` | Upgrade Vercel CLI: `npm i -g vercel@latest` |
-| Deploy stuck on `Building…` / status `UNKNOWN` | Kill hung CLI processes (`pkill -f vercel@latest`). Use **Git push** instead — CLI deploys may never start remote builds (0ms). Requires Node 20+ if retrying CLI |
+| Deploy stuck on `Building…` / status `UNKNOWN` | Kill hung processes: `pkill -f vercel@latest`. Use `--no-wait` on deploy. Check for `"readyState": "BLOCKED"` — promotion is gated by Deployment Checks; Force Promote in dashboard or disable checks |
+| Deploy shows `BLOCKED` | Go to [Vercel dashboard](https://vercel.com/jasons-projects-b167f2fc/setlist-manager) → deployment → Promote to Production, or Project Settings → Deployment Checks |
+| `git push` auth failed | Re-authenticate GitHub (`gh auth login` or update HTTPS token / SSH key), then `git push origin main` |
 | `Missing POSTGRES_URL` | Attach Vercel Postgres storage; run `vercel env pull` |
 | API returns 500 | Run `npm run db:migrate` against production DB |
 | Import times out via API | Run `npm run db:import` locally instead (Hobby plan has 60s function limit) |
