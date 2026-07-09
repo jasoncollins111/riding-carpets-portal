@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 const pages = [
-  { link: '/setlists', title: 'Setlists' },
+  { link: '/', title: 'Setlists' },
   { link: '/songs', title: 'Songs' },
 ];
 const settings = [

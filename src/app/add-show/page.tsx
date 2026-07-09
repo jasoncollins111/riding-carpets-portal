@@ -86,7 +86,7 @@ export default function AddShow() {
         date: formattedDate,
       });
 
-      router.push('/setlists');
+      router.push('/');
     } catch (error) {
       const message =
         axios.isAxiosError(error) && error.response?.data?.message

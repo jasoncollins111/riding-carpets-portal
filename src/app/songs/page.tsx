@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import axios from 'axios';
 
 interface Song {
@@ -39,15 +40,17 @@ export default function SongsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Songs</h1>
+      <h1 className="text-3xl font-bold">Songs</h1>
+      <p className="text-gray-600 mb-6 mt-1">{songs.length} {songs.length === 1 ? 'song' : 'songs'}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {songs.map((song) => (
-          <div
+          <Link
             key={song.id}
-            className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow"
+            href={`/songs/${song.id}`}
+            className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow block"
           >
             <h2 className="text-xl font-semibold">{song.song}</h2>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

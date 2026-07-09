@@ -4,6 +4,10 @@ export function parseShowId(id: string | null): number | null {
   return Number.isNaN(parsed) ? null : parsed;
 }
 
+export function parseSongId(id: string | null): number | null {
+  return parseShowId(id);
+}
+
 export function hasSetlistSongs(setlist: Record<string, unknown[]>): boolean {
   return Object.values(setlist).some((songs) => songs.length > 0);
 }
