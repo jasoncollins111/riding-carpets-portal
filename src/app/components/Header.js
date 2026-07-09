@@ -4,9 +4,9 @@ import * as React from 'react';
 import {
   AppBar,
   Avatar,
-  Box, 
+  Box,
   Menu,
-  MenuItem, 
+  MenuItem,
   IconButton,
   Link,
   Toolbar,
@@ -16,23 +16,17 @@ import {
 const pages = [
   { link: '/setlists', title: 'Setlists' },
   { link: '/songs', title: 'Songs' },
-  // { link: '/forum', title: 'Forum' }
 ];
-const settings = [{ link: "add-song", title: "Add Song" }, { link: "add-show", title: "Add Show" }];
+const settings = [
+  { link: '/add-song', title: 'Add Song' },
+  { link: '/add-show', title: 'Add Show' },
+];
 
 export default function Header() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
@@ -66,12 +60,12 @@ export default function Header() {
             <Link
               key={page.title}
               href={page.link}
-              sx={{ 
-                my: 2, 
-                color: 'white', 
+              sx={{
+                my: 2,
+                color: 'white',
                 display: 'block',
                 textDecoration: 'none',
-                px: 2
+                px: 2,
               }}
             >
               {page.title}
@@ -100,7 +94,9 @@ export default function Header() {
           >
             {settings.map((setting) => (
               <MenuItem key={setting.title} onClick={handleCloseUserMenu}>
-                <Link sx={{ textAlign: 'center' }} href={setting.link}>{setting.title}</Link>
+                <Link sx={{ textAlign: 'center' }} href={setting.link}>
+                  {setting.title}
+                </Link>
               </MenuItem>
             ))}
           </Menu>

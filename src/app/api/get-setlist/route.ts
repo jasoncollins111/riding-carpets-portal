@@ -1,18 +1,21 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse, NextRequest } from 'next/server';
- 
-export async function GET(request: NextRequest) {
-  const id = request.nextUrl.searchParams.get("id")
-  // const { id } = body;
+import { apiError, badRequest } from '@/app/lib/api-error';
+import { parseShowId } from '@/app/lib/validation';
 
+export async function GET(request: NextRequest) {
   try {
-    
-    const response = await sql`SELECT * FROM setlists WHERE show_id = ${id};`;
-    console.log('response......', response)
-    
-    return NextResponse.json({ response  }, { status: 200 });
+    const idParam = request.nextUrl.searchParams.get('id');
+    const id = parseShowId(idParam);
+    if (id === null) {
+      return badRequest('A numeric show id is required');
+    }
+
+    const response = await sql`
+      SELECT * FROM setlists WHERE show_id = ${id} ORDER BY position ASC
+    `;
+    return NextResponse.json({ response }, { status: 200 });
   } catch (error) {
-    console.log('error', error);
-    return NextResponse.json({ error }, { status: 500 });
+    return apiError(error);
   }
 }

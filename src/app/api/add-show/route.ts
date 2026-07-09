@@ -1,18 +1,25 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
- 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const { venue, city, state, notes, date } = body;
+import { apiError, badRequest } from '@/app/lib/api-error';
+import { isNonEmptyString } from '@/app/lib/validation';
 
+export async function POST(request: Request) {
   try {
-    if (!date || !venue || !city || !state) throw new Error('data required');
-    await sql`INSERT INTO Shows (date, venue, city, state, notes) VALUES (${date}, ${venue}, ${city}, ${state}, ${notes});`;
+    const body = await request.json();
+    const { venue, city, state, notes, date } = body;
+
+    if (!isNonEmptyString(date) || !isNonEmptyString(venue) || !isNonEmptyString(city) || !isNonEmptyString(state)) {
+      return badRequest('date, venue, city, and state are required');
+    }
+
+    await sql`
+      INSERT INTO shows (date, venue, city, state, notes)
+      VALUES (${date}, ${venue}, ${city}, ${state}, ${notes ?? ''})
+    `;
+
+    const shows = await sql`SELECT * FROM shows ORDER BY date DESC`;
+    return NextResponse.json({ shows }, { status: 200 });
   } catch (error) {
-    console.log('error', error)
-    return NextResponse.json({ error }, { status: 500 });
+    return apiError(error);
   }
- 
-  const shows = await sql`SELECT * FROM Shows;`;
-  return NextResponse.json({ shows }, { status: 200 });
 }

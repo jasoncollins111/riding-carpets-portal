@@ -1,18 +1,22 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
- 
+import { apiError, badRequest } from '@/app/lib/api-error';
+import { isNonEmptyString } from '@/app/lib/validation';
+
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { song } = body;
-  
   try {
-    if (!song) throw new Error('data required');
-    await sql`INSERT INTO Songs (Song) VALUES (${song});`;
+    const body = await request.json();
+    const { song } = body;
+
+    if (!isNonEmptyString(song)) {
+      return badRequest('song name is required');
+    }
+
+    await sql`INSERT INTO songs (song) VALUES (${song.trim()})`;
+
+    const songs = await sql`SELECT * FROM songs ORDER BY song ASC`;
+    return NextResponse.json({ songs }, { status: 200 });
   } catch (error) {
-    console.log('error', error)
-    return NextResponse.json({ error }, { status: 500 });
+    return apiError(error);
   }
- 
-  const songs = await sql`SELECT * FROM Songs;`;
-  return NextResponse.json({ songs }, { status: 200 });
 }

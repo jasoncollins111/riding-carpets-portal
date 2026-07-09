@@ -1,16 +1,12 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
- 
-export async function GET(request: Request) {
+import { apiError } from '@/app/lib/api-error';
+
+export async function GET() {
   try {
-    // await sql`Drop Table if exists Songs cascade`;
-    // const result =
-    //   await sql`CREATE TABLE Songs ( id SERIAL PRIMARY KEY, Song varchar(255) NOT NULL UNIQUE);`;
-      const songs = await sql`SELECT * from Songs;`;
-      console.log('result', songs)
+    const songs = await sql`SELECT * FROM songs ORDER BY song ASC`;
     return NextResponse.json({ songs }, { status: 200 });
   } catch (error) {
-    console.log('error', error);
-    return NextResponse.json({ error }, { status: 500 });
+    return apiError(error);
   }
 }

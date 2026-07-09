@@ -6,46 +6,58 @@ import {
   Button,
   Input,
   Stack,
-  Textarea,
   Typography,
-
+  Alert,
 } from '@mui/joy';
 import axios from 'axios';
 
-
 export default function SetlistForm() {
-  
   const [song, setSong] = useState<string>('');
-  const [composer, setComposer] = useState<string>('');
-  const [lyrics, setLyrics] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function submitSong() {
-    if (song) {
-      try {
-        await axios.post("/api/add-song", { song });
-        setSong('');
-      } catch (error) {
-        console.log('error', error);
-      }
+    if (!song.trim()) return;
+
+    setError(null);
+    setSuccess(false);
+    setIsSubmitting(true);
+
+    try {
+      await axios.post('/api/add-song', { song: song.trim() });
+      setSong('');
+      setSuccess(true);
+    } catch (err) {
+      const message =
+        axios.isAxiosError(err) && err.response?.data?.message
+          ? err.response.data.message
+          : 'Failed to add song.';
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
-  
-
   return (
-    <Box sx={{ height: "100vh" }}>
-      <Box sx={{m:"50px"}}>
+    <Box sx={{ height: '100vh' }}>
+      <Box sx={{ m: '50px' }}>
         <Typography level="h1">Add Song</Typography>
         <FormControl>
-          <Stack spacing={1}>
-            <Input placeholder="Song Name" value={song} onChange={e => setSong(e.target.value)} /> 
-            <Input placeholder="Written By" value={composer} onChange={e => setComposer(e.target.value)} /> 
-            <Textarea minRows={6} placeholder="Lyrics" onChange={e => setLyrics(e.target.value)}/>
-            <Button onClick={submitSong}>Submit Song</Button>
+          <Stack spacing={1} sx={{ maxWidth: 400, mt: 2 }}>
+            <Input
+              placeholder="Song Name"
+              value={song}
+              onChange={(e) => setSong(e.target.value)}
+            />
+            {error ? <Alert color="danger">{error}</Alert> : null}
+            {success ? <Alert color="success">Song added.</Alert> : null}
+            <Button onClick={submitSong} loading={isSubmitting} disabled={isSubmitting}>
+              Submit Song
+            </Button>
           </Stack>
         </FormControl>
       </Box>
     </Box>
-  )
-
+  );
 }

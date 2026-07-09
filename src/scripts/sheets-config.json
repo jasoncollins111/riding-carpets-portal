@@ -1,0 +1,14 @@
+{
+  "spreadsheetId": "1ucnPN1-iHYJEjzOXgOah93xCncMLL6j10bsMJXz_vd4",
+  "yearTabs": ["2020", "2021", "2022", "2023", "2024", "2025"],
+  "columns": {
+    "venue": "Venue",
+    "city": "City",
+    "date": "Date",
+    "lineup": "Lineup",
+    "setlist": "Setlist",
+    "notes": "Notes",
+    "amountEarned": "Amount Earned"
+  },
+  "skipRowIfEmpty": ["venue", "date"]
+}
