@@ -139,6 +139,7 @@ All should return `200`. Also test adding a show at `/add-show` and a song at `/
 | Import times out via API | Run `npm run db:import` locally instead (Hobby plan has 60s function limit) |
 | Import returns 401 | Set `IMPORT_SECRET` in Vercel env vars |
 | Build fails | Run `npm run build` locally to reproduce; fix TypeScript/lint errors |
+| `Vulnerable version of Next.js detected` | Upgrade to a patched release (e.g. `npm install next@15.0.7` for 15.0.x). See [Vercel React2Shell bulletin](https://vercel.com/kb/bulletin/react2shell) |
 
 ## Architecture
 
