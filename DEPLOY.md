@@ -1,6 +1,8 @@
 # Deploying Riding Carpets Portal
 
-This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://riding-carpets-portal.vercel.app** (rename the Vercel project from `setlist-manager` if the URL still resolves to the old name).
+This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://setlist-manager.vercel.app** — this is the working deployment with Postgres attached.
+
+> **Note:** If you create a separate Vercel project named `riding-carpets-portal`, you must connect the same Postgres store / copy `POSTGRES_URL` env vars or APIs will return 500.
 
 ## Prerequisites
 
@@ -70,7 +72,7 @@ npm run db:import
 Or trigger via the protected API endpoint after setting `IMPORT_SECRET` in Vercel:
 
 ```bash
-curl -X POST https://riding-carpets-portal.vercel.app/api/import-sheets \
+curl -X POST https://setlist-manager.vercel.app/api/import-sheets \
   -H "Authorization: Bearer YOUR_IMPORT_SECRET"
 ```
 
@@ -118,10 +120,10 @@ npx vercel@latest promote <deployment-url> --yes
 ## Post-Deploy Verification
 
 ```bash
-curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://riding-carpets-portal.vercel.app
-curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://riding-carpets-portal.vercel.app/api/shows
-curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://riding-carpets-portal.vercel.app/setlists
-curl -sS -o /dev/null -w "songs: %{http_code}\n" https://riding-carpets-portal.vercel.app/songs
+curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://setlist-manager.vercel.app
+curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://setlist-manager.vercel.app/api/shows
+curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://setlist-manager.vercel.app/setlists
+curl -sS -o /dev/null -w "songs: %{http_code}\n" https://setlist-manager.vercel.app/songs
 ```
 
 All should return `200`. Also test adding a show at `/add-show` and a song at `/add-song`.
