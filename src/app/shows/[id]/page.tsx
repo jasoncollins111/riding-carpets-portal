@@ -18,6 +18,7 @@ interface Show {
 }
 
 interface SetlistSong {
+  song_id?: number;
   song_name: string;
   set_name: string | null;
   segue: boolean | null;

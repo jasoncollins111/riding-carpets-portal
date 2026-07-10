@@ -15,21 +15,31 @@ const CONNECTION_ERROR_CODES = new Set([
   '08001',
 ]);
 
-export function getConnectionString(): string {
-  const connectionString =
-    process.env.POSTGRES_PRISMA_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.DATABASE_URL ||
-    process.env.PRISMA_DATABASE_URL ||
-    process.env.POSTGRES_URL_NON_POOLING;
+const CONNECTION_ENV_KEYS = [
+  'POSTGRES_PRISMA_URL',
+  'POSTGRES_URL',
+  'DATABASE_URL',
+  'PRISMA_DATABASE_URL',
+  'POSTGRES_URL_NON_POOLING',
+] as const;
 
-  if (!connectionString) {
-    throw new Error(
-      'Missing database URL. Set POSTGRES_PRISMA_URL, POSTGRES_URL, or DATABASE_URL.',
-    );
+function isValidConnectionString(value: string | undefined): value is string {
+  if (!value) return false;
+  const trimmed = value.trim();
+  return trimmed.startsWith('postgres://') || trimmed.startsWith('postgresql://');
+}
+
+export function getConnectionString(): string {
+  for (const key of CONNECTION_ENV_KEYS) {
+    const value = process.env[key];
+    if (isValidConnectionString(value)) {
+      return value.trim();
+    }
   }
 
-  return connectionString;
+  throw new Error(
+    'Missing database URL. Set POSTGRES_PRISMA_URL, POSTGRES_URL, or DATABASE_URL.',
+  );
 }
 
 function resetPool() {

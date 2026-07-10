@@ -24,6 +24,14 @@ describe('getConnectionString', () => {
     expect(getConnectionString()).toBe('postgres://pooled');
   });
 
+  it('skips empty or placeholder env values', () => {
+    process.env.POSTGRES_PRISMA_URL = '""';
+    process.env.POSTGRES_URL = '';
+    process.env.DATABASE_URL = 'postgresql://database';
+
+    expect(getConnectionString()).toBe('postgresql://database');
+  });
+
   it('falls back through known database env vars', () => {
     process.env.DATABASE_URL = 'postgres://database';
 

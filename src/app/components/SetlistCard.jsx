@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Box } from '@mui/material';
 import { Sheet, Typography } from '@mui/joy';
 
@@ -27,7 +28,13 @@ export default function SetlistCard({ setlist, setlistTitle }) {
 
           return (
             <Typography key={`${song.song_name}-${idx}`} level="body-sm" component="span">
-              {song.song_name}
+              {song.song_id ? (
+                <Link href={`/songs/${song.song_id}`} className="text-blue-600 hover:underline">
+                  {song.song_name}
+                </Link>
+              ) : (
+                song.song_name
+              )}
               {footnote}
               {timing}
               {songTransitionSymbol}

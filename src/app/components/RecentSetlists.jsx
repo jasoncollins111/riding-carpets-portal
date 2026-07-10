@@ -146,11 +146,6 @@ export default function RecentSetlists() {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {concert.lineup ? (
-                    <Typography level="body-sm" sx={{ mb: 1 }}>
-                      <strong>Lineup:</strong> {concert.lineup}
-                    </Typography>
-                  ) : null}
                   {concert.notes ? (
                     <Typography level="body-sm" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
                       <strong>Notes:</strong> {concert.notes}

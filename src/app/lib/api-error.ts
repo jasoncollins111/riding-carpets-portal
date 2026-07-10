@@ -6,9 +6,13 @@ export function badRequest(message: string) {
 
 export function apiError(error: unknown, status = 500) {
   console.error(error);
-  if (status === 500) {
+  const isDev = process.env.NODE_ENV === 'development';
+  const message =
+    error instanceof Error ? error.message : 'Request failed';
+
+  if (status === 500 && !isDev) {
     return NextResponse.json({ message: 'Internal server error' }, { status });
   }
-  const message = error instanceof Error ? error.message : 'Request failed';
+
   return NextResponse.json({ message }, { status });
 }
