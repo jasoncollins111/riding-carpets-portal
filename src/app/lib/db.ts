@@ -4,18 +4,48 @@ declare global {
   var pgPool: Pool | undefined;
 }
 
+const CONNECTION_ERROR_CODES = new Set([
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ETIMEDOUT',
+  'ENOTFOUND',
+  '57P01',
+  '08006',
+  '08003',
+  '08001',
+]);
+
 function getConnectionString(): string {
   const connectionString =
-    process.env.POSTGRES_URL_NON_POOLING ||
     process.env.POSTGRES_URL ||
     process.env.DATABASE_URL ||
-    process.env.PRISMA_DATABASE_URL;
+    process.env.PRISMA_DATABASE_URL ||
+    process.env.POSTGRES_URL_NON_POOLING;
 
   if (!connectionString) {
     throw new Error('Missing POSTGRES_URL or DATABASE_URL');
   }
 
   return connectionString;
+}
+
+function resetPool() {
+  if (global.pgPool) {
+    global.pgPool.end().catch(() => {});
+    global.pgPool = undefined;
+  }
+}
+
+function isConnectionError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const err = error as { code?: string; message?: string };
+  if (err.code && CONNECTION_ERROR_CODES.has(err.code)) return true;
+  const message = err.message?.toLowerCase() ?? '';
+  return (
+    message.includes('connection terminated') ||
+    message.includes('connection timeout') ||
+    message.includes('too many connections')
+  );
 }
 
 function getPool(): Pool {
@@ -25,6 +55,10 @@ function getPool(): Pool {
       max: 1,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
+    });
+    global.pgPool.on('error', (err) => {
+      console.error('Postgres pool error:', err);
+      resetPool();
     });
   }
   return global.pgPool;
@@ -38,5 +72,13 @@ export async function sql<T extends QueryResultRow = QueryResultRow>(
   for (let i = 0; i < values.length; i++) {
     text += `$${i + 1}${strings[i + 1] ?? ''}`;
   }
-  return getPool().query<T>(text, values);
+
+  try {
+    return await getPool().query<T>(text, values);
+  } catch (error) {
+    if (!isConnectionError(error)) throw error;
+    console.error('Postgres connection error, retrying once:', error);
+    resetPool();
+    return getPool().query<T>(text, values);
+  }
 }
