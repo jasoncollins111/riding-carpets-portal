@@ -7,6 +7,7 @@ import axios from 'axios';
 interface Song {
   id: number;
   song: string;
+  show_count: number;
 }
 
 export default function SongsPage() {
@@ -50,6 +51,9 @@ export default function SongsPage() {
             className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow block"
           >
             <h2 className="text-xl font-semibold">{song.song}</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              {song.show_count} {song.show_count === 1 ? 'show' : 'shows'}
+            </p>
           </Link>
         ))}
       </div>
