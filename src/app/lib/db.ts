@@ -15,15 +15,18 @@ const CONNECTION_ERROR_CODES = new Set([
   '08001',
 ]);
 
-function getConnectionString(): string {
+export function getConnectionString(): string {
   const connectionString =
+    process.env.POSTGRES_PRISMA_URL ||
     process.env.POSTGRES_URL ||
     process.env.DATABASE_URL ||
     process.env.PRISMA_DATABASE_URL ||
     process.env.POSTGRES_URL_NON_POOLING;
 
   if (!connectionString) {
-    throw new Error('Missing POSTGRES_URL or DATABASE_URL');
+    throw new Error(
+      'Missing database URL. Set POSTGRES_PRISMA_URL, POSTGRES_URL, or DATABASE_URL.',
+    );
   }
 
   return connectionString;
