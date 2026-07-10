@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { sql } from '@/app/lib/db';
 import { NextResponse } from 'next/server';
 import { apiError } from '@/app/lib/api-error';
 

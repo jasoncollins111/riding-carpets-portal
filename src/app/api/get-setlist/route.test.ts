@@ -4,7 +4,7 @@ import { GET } from './route';
 
 const mockSql = vi.fn();
 
-vi.mock('@vercel/postgres', () => ({
+vi.mock('@/app/lib/db', () => ({
   sql: (...args: unknown[]) => mockSql(...args),
 }));
 

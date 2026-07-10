@@ -1,7 +1,7 @@
 const path = require('path');
 const dotenv = require('dotenv');
-const { sql } = require('@vercel/postgres');
 const config = require('./sheets-config.json');
+const { createScriptDb, getConnectionString } = require('./db');
 const {
   parseSetlistText,
   parseSheetDate,
@@ -15,6 +15,8 @@ const root = path.resolve(__dirname, '../..');
 for (const file of ['.env', '.env.local', '.env.development.local']) {
   dotenv.config({ path: path.join(root, file), quiet: true });
 }
+
+let sql;
 
 async function fetchSheetTab(sheetName) {
   const spreadsheetId = process.env.GOOGLE_SHEETS_ID || config.spreadsheetId;
@@ -142,23 +144,30 @@ async function importTab(sheetName) {
 }
 
 async function main() {
-  if (!process.env.POSTGRES_URL) {
+  if (!getConnectionString()) {
     console.error('Missing POSTGRES_URL.');
     process.exit(1);
   }
 
-  console.log('Starting Google Sheets import...');
-  let total = 0;
+  const db = createScriptDb();
+  sql = db.sql;
 
-  for (const tab of config.yearTabs) {
-    try {
-      total += await importTab(tab);
-    } catch (err) {
-      console.error(`  Error on tab ${tab}:`, err.message);
+  try {
+    console.log('Starting Google Sheets import...');
+    let total = 0;
+
+    for (const tab of config.yearTabs) {
+      try {
+        total += await importTab(tab);
+      } catch (err) {
+        console.error(`  Error on tab ${tab}:`, err.message);
+      }
     }
-  }
 
-  console.log(`Import complete. ${total} shows total.`);
+    console.log(`Import complete. ${total} shows total.`);
+  } finally {
+    await db.close();
+  }
 }
 
 main().catch((err) => {
