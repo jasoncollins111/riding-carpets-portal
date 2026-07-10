@@ -1,8 +1,8 @@
 # Deploying Riding Carpets Portal
 
-This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://riding-carpets-portal.vercel.app**.
+This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://setlist-manager.vercel.app** — this is the working deployment with Postgres attached.
 
-> **Note:** API routes require `POSTGRES_URL` or `DATABASE_URL` in Production. If APIs return 500, confirm the Postgres store is connected and redeploy.
+> **Note:** A separate Vercel project (`riding-carpets-portal`) also deploys from this repo but does **not** have Postgres connected. Use **setlist-manager.vercel.app** unless you attach the same Postgres store to that project.
 
 ## Prerequisites
 

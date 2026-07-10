@@ -68,7 +68,7 @@ export default function ShowPage() {
           axios.get('/api/get-setlist', { params: { id } }),
         ]);
         setShow(showResponse.data?.show ?? null);
-        setSetlist(setlistResponse.data?.response?.rows ?? []);
+        setSetlist(setlistResponse.data?.rows ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load show');
       } finally {
