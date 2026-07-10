@@ -23,19 +23,52 @@ const CONNECTION_ENV_KEYS = [
   'POSTGRES_URL_NON_POOLING',
 ] as const;
 
-function isValidConnectionString(value: string | undefined): value is string {
-  if (!value) return false;
-  const trimmed = value.trim();
-  return trimmed.startsWith('postgres://') || trimmed.startsWith('postgresql://');
+function normalizeConnectionString(value: string | undefined): string | null {
+  if (!value) return null;
+
+  let trimmed = value.trim();
+  if (!trimmed || trimmed === '""' || trimmed === "''") return null;
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    trimmed = trimmed.slice(1, -1).trim();
+  }
+
+  if (trimmed.startsWith('prisma+')) {
+    trimmed = trimmed.slice('prisma+'.length);
+  }
+
+  if (
+    trimmed.startsWith('postgres://') ||
+    trimmed.startsWith('postgresql://')
+  ) {
+    return trimmed;
+  }
+
+  return null;
+}
+
+function connectionStringFromParts(): string | null {
+  const host = process.env.POSTGRES_HOST?.trim();
+  const user = process.env.POSTGRES_USER?.trim();
+  const password = process.env.POSTGRES_PASSWORD;
+  const database = process.env.POSTGRES_DATABASE?.trim();
+
+  if (!host || !user || !password || !database) return null;
+
+  return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}/${database}?sslmode=require`;
 }
 
 export function getConnectionString(): string {
   for (const key of CONNECTION_ENV_KEYS) {
-    const value = process.env[key];
-    if (isValidConnectionString(value)) {
-      return value.trim();
-    }
+    const normalized = normalizeConnectionString(process.env[key]);
+    if (normalized) return normalized;
   }
+
+  const fromParts = connectionStringFromParts();
+  if (fromParts) return fromParts;
 
   throw new Error(
     'Missing database URL. Set POSTGRES_PRISMA_URL, POSTGRES_URL, or DATABASE_URL.',

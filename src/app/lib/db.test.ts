@@ -7,6 +7,10 @@ const ENV_KEYS = [
   'DATABASE_URL',
   'PRISMA_DATABASE_URL',
   'POSTGRES_URL_NON_POOLING',
+  'POSTGRES_HOST',
+  'POSTGRES_USER',
+  'POSTGRES_PASSWORD',
+  'POSTGRES_DATABASE',
 ] as const;
 
 describe('getConnectionString', () => {
@@ -30,6 +34,23 @@ describe('getConnectionString', () => {
     process.env.DATABASE_URL = 'postgresql://database';
 
     expect(getConnectionString()).toBe('postgresql://database');
+  });
+
+  it('strips surrounding quotes and prisma prefixes', () => {
+    process.env.POSTGRES_URL = '"prisma+postgresql://quoted"';
+
+    expect(getConnectionString()).toBe('postgresql://quoted');
+  });
+
+  it('builds a connection string from Vercel Postgres parts', () => {
+    process.env.POSTGRES_HOST = 'db.example.com';
+    process.env.POSTGRES_USER = 'user';
+    process.env.POSTGRES_PASSWORD = 'p@ss';
+    process.env.POSTGRES_DATABASE = 'verceldb';
+
+    expect(getConnectionString()).toBe(
+      'postgresql://user:p%40ss@db.example.com/verceldb?sslmode=require',
+    );
   });
 
   it('falls back through known database env vars', () => {
