@@ -52,7 +52,7 @@ export default function Header() {
             textDecoration: 'none',
           }}
         >
-          Riding Carpets Portal
+          RC Portal
         </Typography>
 
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -74,7 +74,7 @@ export default function Header() {
         </Box>
         <Box sx={{ flexGrow: 0 }}>
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar alt="Riding Carpets Portal" src="/static/images/avatar/2.jpg" />
+            <Avatar alt="RC Portal" src="/static/images/avatar/2.jpg" />
           </IconButton>
           <Menu
             sx={{ mt: '45px' }}
