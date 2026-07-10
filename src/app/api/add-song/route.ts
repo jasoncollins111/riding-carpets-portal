@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { apiError, badRequest } from '@/app/lib/api-error';
 import { isNonEmptyString } from '@/app/lib/validation';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -14,8 +16,8 @@ export async function POST(request: Request) {
 
     await sql`INSERT INTO songs (song) VALUES (${song.trim()})`;
 
-    const songs = await sql`SELECT * FROM songs ORDER BY song ASC`;
-    return NextResponse.json({ songs }, { status: 200 });
+    const result = await sql`SELECT * FROM songs ORDER BY song ASC`;
+    return NextResponse.json({ songs: result.rows }, { status: 200 });
   } catch (error) {
     return apiError(error);
   }

@@ -40,7 +40,7 @@ export default function SongShowsPage() {
       try {
         const response = await axios.get('/api/song-shows', { params: { id } });
         setSong(response.data?.song ?? null);
-        setShows(response.data?.shows?.rows ?? []);
+        setShows(response.data?.shows ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load shows');
       } finally {

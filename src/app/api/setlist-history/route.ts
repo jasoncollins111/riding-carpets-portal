@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { apiError, badRequest } from '@/app/lib/api-error';
 import { isNonEmptyString } from '@/app/lib/validation';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: NextRequest) {
   try {
     const song = request.nextUrl.searchParams.get('song');

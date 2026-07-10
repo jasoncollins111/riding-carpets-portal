@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { apiError, badRequest } from '@/app/lib/api-error';
 import { isNonEmptyString, validateSetlistItems } from '@/app/lib/validation';
 
+export const runtime = 'nodejs';
+
 interface SetlistInput {
   song_name: string;
   set_name?: string;

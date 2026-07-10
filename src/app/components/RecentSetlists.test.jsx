@@ -22,16 +22,12 @@ describe('RecentSetlists', () => {
     vi.mocked(axios.get)
       .mockResolvedValueOnce({
         data: {
-          shows: {
-            rows: [{ id: 1, venue: 'Red Rocks', city: 'Morrison', state: 'CO', date: '2024-06-01' }],
-          },
+          shows: [{ id: 1, venue: 'Red Rocks', city: 'Morrison', state: 'CO', date: '2024-06-01' }],
         },
       })
       .mockResolvedValueOnce({
         data: {
-          response: {
-            rows: [{ song_id: 10, song_name: 'Terrapin', position: 1, set_name: 'Set I' }],
-          },
+          rows: [{ song_id: 10, song_name: 'Terrapin', position: 1, set_name: 'Set I' }],
         },
       });
 
@@ -51,7 +47,7 @@ describe('RecentSetlists', () => {
 
   it('shows empty state when no concerts exist', async () => {
     vi.mocked(axios.get).mockResolvedValueOnce({
-      data: { shows: { rows: [] } },
+      data: { shows: [] },
     });
 
     render(<RecentSetlists />);

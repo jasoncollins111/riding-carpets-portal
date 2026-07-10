@@ -8,7 +8,8 @@ function getConnectionString(): string {
   const connectionString =
     process.env.POSTGRES_URL_NON_POOLING ||
     process.env.POSTGRES_URL ||
-    process.env.DATABASE_URL;
+    process.env.DATABASE_URL ||
+    process.env.PRISMA_DATABASE_URL;
 
   if (!connectionString) {
     throw new Error('Missing POSTGRES_URL or DATABASE_URL');
@@ -19,7 +20,12 @@ function getConnectionString(): string {
 
 function getPool(): Pool {
   if (!global.pgPool) {
-    global.pgPool = new Pool({ connectionString: getConnectionString() });
+    global.pgPool = new Pool({
+      connectionString: getConnectionString(),
+      max: 1,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    });
   }
   return global.pgPool;
 }

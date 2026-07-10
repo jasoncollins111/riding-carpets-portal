@@ -18,7 +18,7 @@ export default function SongsPage() {
     const fetchSongs = async () => {
       try {
         const response = await axios.get('/api/songs');
-        const rows = response.data?.songs?.rows ?? [];
+        const rows = response.data?.songs ?? [];
         setSongs(rows);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load songs');

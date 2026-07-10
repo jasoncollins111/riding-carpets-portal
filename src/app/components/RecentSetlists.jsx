@@ -60,7 +60,7 @@ export default function RecentSetlists() {
         const { id } = concert;
         try {
           const setlist = await axios.get('/api/get-setlist', { params: { id } });
-          const songs = setlist?.data?.response?.rows ?? [];
+          const songs = setlist?.data?.rows ?? [];
           return { concert, setlist: songs };
         } catch {
           return { concert, setlist: [] };
@@ -77,7 +77,7 @@ export default function RecentSetlists() {
       try {
         const params = year ? { year } : {};
         const result = await axios.get('/api/get-concerts', { params });
-        const concerts = result?.data?.shows?.rows ?? [];
+        const concerts = result?.data?.shows ?? [];
         await getSetlists(concerts);
       } catch {
         setError('Failed to load concerts.');

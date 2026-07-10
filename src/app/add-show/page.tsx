@@ -55,7 +55,7 @@ export default function AddShow() {
 
   async function getSongs() {
     const result = await axios.get('/api/songs');
-    const songs = result?.data?.songs?.rows ?? [];
+    const songs = result?.data?.songs ?? [];
     setSongList(songs);
     setFilteredSongList(songs);
   }

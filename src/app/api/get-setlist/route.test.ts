@@ -26,8 +26,8 @@ describe('GET /api/get-setlist', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.response.rows[0].song_name).toBe('Terrapin');
-    expect(data.response.rows[1].segue).toBe(true);
+    expect(data.rows[0].song_name).toBe('Terrapin');
+    expect(data.rows[1].segue).toBe(true);
   });
 
   it('returns 400 for invalid id', async () => {
