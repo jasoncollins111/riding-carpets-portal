@@ -74,7 +74,7 @@ export default function Header() {
         </Box>
         <Box sx={{ flexGrow: 0 }}>
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar alt="Riding Carpets Portal">R</Avatar>
+            <Avatar alt="Riding Carpets Portal" src="/static/images/avatar/2.jpg" />
           </IconButton>
           <Menu
             sx={{ mt: '45px' }}

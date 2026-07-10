@@ -1,8 +1,8 @@
 # Deploying Riding Carpets Portal
 
-This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://setlist-manager.vercel.app** — this is the working deployment with Postgres attached.
+This app is a Next.js 15 project backed by Vercel Postgres. Production is hosted at **https://riding-carpets-portal.vercel.app**.
 
-> **Note:** If you create a separate Vercel project named `riding-carpets-portal`, you must connect the same Postgres store / copy `POSTGRES_URL` env vars or APIs will return 500.
+> **Note:** API routes require `POSTGRES_URL` or `DATABASE_URL` in Production. If APIs return 500, confirm the Postgres store is connected and redeploy.
 
 ## Prerequisites
 
@@ -33,11 +33,56 @@ npm i -g vercel@latest
 
 | Variable | Required | Set by | Purpose |
 |----------|----------|--------|---------|
-| `POSTGRES_URL` | Yes | Vercel Postgres (auto) | Database connection for all API routes |
+| `POSTGRES_URL` | Yes | Vercel Postgres / Prisma (auto) | Database connection for all API routes |
+| `DATABASE_URL` | Yes* | Prisma Postgres (auto) | Alternative connection string (*use if `POSTGRES_URL` is unset) |
 | `IMPORT_SECRET` | No | Manual | Bearer token for `POST /api/import-sheets` |
 | `GOOGLE_SHEETS_ID` | No | Manual | Overrides default spreadsheet in `src/scripts/sheets-config.json` |
 
 Postgres vars (`POSTGRES_HOST`, `POSTGRES_USER`, etc.) are provisioned automatically when you attach a Vercel Postgres store to the project.
+
+## Repopulate from Google Sheets (fresh database)
+
+Use this when setting up a new Vercel project or replacing a lost database. Data comes from the band spreadsheet configured in `src/scripts/sheets-config.json` (tabs 2020–2025).
+
+### 1. Create Postgres on the target Vercel project
+
+1. Open your project in the [Vercel dashboard](https://vercel.com/rc-setlists/riding-carpets-portal)
+2. Go to **Storage** → **Create Database** → **Postgres** → **Continue**
+3. Connect it to **Production** (and Preview if you want)
+
+This injects `POSTGRES_URL` / `DATABASE_URL` and related env vars into the project.
+
+### 2. Import locally (recommended)
+
+The import can take longer than Vercel's 60s function limit, so run it from your machine:
+
+```bash
+npm install
+vercel link                # select riding-carpets-portal
+vercel env pull .env.local # pulls POSTGRES_URL
+npm run db:migrate         # create tables
+npm run db:import          # load all shows/songs/setlists from Google Sheets
+```
+
+The Google Sheet must be **publicly readable** (Share → Anyone with the link → Viewer). Default sheet ID is in `src/scripts/sheets-config.json`; override with `GOOGLE_SHEETS_ID` in `.env.local` if needed.
+
+### 3. Verify
+
+```bash
+curl -sS https://riding-carpets-portal.vercel.app/api/shows | head -c 200
+```
+
+You should see JSON with show rows, not `Internal server error`.
+
+### 4. Redeploy (if needed)
+
+If the app was deployed before Postgres existed, trigger a redeploy so production picks up the new env vars:
+
+```bash
+git push origin main
+```
+
+Or in the Vercel dashboard: **Deployments** → latest → **Redeploy**.
 
 ## First-Time Setup
 
@@ -72,7 +117,7 @@ npm run db:import
 Or trigger via the protected API endpoint after setting `IMPORT_SECRET` in Vercel:
 
 ```bash
-curl -X POST https://setlist-manager.vercel.app/api/import-sheets \
+curl -X POST https://riding-carpets-portal.vercel.app/api/import-sheets \
   -H "Authorization: Bearer YOUR_IMPORT_SECRET"
 ```
 
@@ -120,10 +165,10 @@ npx vercel@latest promote <deployment-url> --yes
 ## Post-Deploy Verification
 
 ```bash
-curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://setlist-manager.vercel.app
-curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://setlist-manager.vercel.app/api/shows
-curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://setlist-manager.vercel.app/setlists
-curl -sS -o /dev/null -w "songs: %{http_code}\n" https://setlist-manager.vercel.app/songs
+curl -sS -o /dev/null -w "homepage: %{http_code}\n" https://riding-carpets-portal.vercel.app
+curl -sS -o /dev/null -w "api/shows: %{http_code}\n" https://riding-carpets-portal.vercel.app/api/shows
+curl -sS -o /dev/null -w "setlists: %{http_code}\n" https://riding-carpets-portal.vercel.app/setlists
+curl -sS -o /dev/null -w "songs: %{http_code}\n" https://riding-carpets-portal.vercel.app/songs
 ```
 
 All should return `200`. Also test adding a show at `/add-show` and a song at `/add-song`.
