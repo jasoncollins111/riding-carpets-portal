@@ -7,9 +7,16 @@ import RecentSetlists from './components/RecentSetlists';
 
 export default function Home() {
   return (
-    <Box sx={{ height: '100vh' }}>
-      <Box sx={{ my: 4 }}>
-        <Typography level="h1" sx={{ mb: 3, ml: 6 }}>
+    <Box sx={{ minHeight: '100dvh' }}>
+      <Box
+        sx={{
+          px: { xs: 2, sm: 3, md: 6 },
+          py: { xs: 2, md: 4 },
+          maxWidth: 900,
+          mx: 'auto',
+        }}
+      >
+        <Typography level="h1" sx={{ mb: 3 }}>
           Setlists
         </Typography>
         <RecentSetlists />

@@ -94,7 +94,7 @@ export default function SongShowsPage() {
       <Link href="/songs" className="text-blue-600 hover:underline mb-4 inline-block">
         &larr; Back to Songs
       </Link>
-      <h1 className="text-3xl font-bold">{song.song}</h1>
+      <h1 className="text-3xl font-bold break-words">{song.song}</h1>
       {stats && stats.play_count > 0 ? (
         <div className="text-gray-700 space-y-2 mb-6 mt-4">
           <p>
@@ -139,7 +139,7 @@ export default function SongShowsPage() {
                 href={`/shows/${show.id}`}
                 className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow block"
               >
-                <p className="text-lg font-semibold">
+                <p className="text-lg font-semibold break-words">
                   {formatDate(show.date)} — {show.venue} — {show.city}
                   {show.state ? `, ${show.state}` : ''}
                 </p>

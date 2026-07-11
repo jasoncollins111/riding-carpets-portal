@@ -40,24 +40,29 @@ export default function SetlistForm() {
   }
 
   return (
-    <Box sx={{ height: '100vh' }}>
-      <Box sx={{ m: '50px' }}>
-        <Typography level="h1">Add Song</Typography>
-        <FormControl>
-          <Stack spacing={1} sx={{ maxWidth: 400, mt: 2 }}>
-            <Input
-              placeholder="Song Name"
-              value={song}
-              onChange={(e) => setSong(e.target.value)}
-            />
-            {error ? <Alert color="danger">{error}</Alert> : null}
-            {success ? <Alert color="success">Song added.</Alert> : null}
-            <Button onClick={submitSong} loading={isSubmitting} disabled={isSubmitting}>
-              Submit Song
-            </Button>
-          </Stack>
-        </FormControl>
-      </Box>
+    <Box
+      sx={{
+        px: { xs: 2, sm: 3, md: 6 },
+        py: { xs: 2, md: 4 },
+        maxWidth: 900,
+        mx: 'auto',
+      }}
+    >
+      <Typography level="h1">Add Song</Typography>
+      <FormControl>
+        <Stack spacing={1} sx={{ maxWidth: { xs: '100%', sm: 400 }, mt: 2 }}>
+          <Input
+            placeholder="Song Name"
+            value={song}
+            onChange={(e) => setSong(e.target.value)}
+          />
+          {error ? <Alert color="danger">{error}</Alert> : null}
+          {success ? <Alert color="success">Song added.</Alert> : null}
+          <Button onClick={submitSong} loading={isSubmitting} disabled={isSubmitting}>
+            Submit Song
+          </Button>
+        </Stack>
+      </FormControl>
     </Box>
   );
 }

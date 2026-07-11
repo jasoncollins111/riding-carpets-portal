@@ -94,7 +94,7 @@ export default function RecentSetlists() {
 
   if (isLoading) {
     return (
-      <Box sx={{ ml: '50px', display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <CircularProgress size="sm" />
         <Typography>Loading concerts...</Typography>
       </Box>
@@ -103,15 +103,23 @@ export default function RecentSetlists() {
 
   if (error) {
     return (
-      <Box sx={{ ml: '50px' }}>
+      <Box>
         <Alert color="danger">{error}</Alert>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ ml: '50px', mr: '50px' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 2,
+          mb: 2,
+        }}
+      >
         <Typography level="h2">Concerts</Typography>
         <Select
           value={year}
@@ -134,16 +142,19 @@ export default function RecentSetlists() {
       {!concertList.length ? (
         <Typography level="body-md">No concerts for this year.</Typography>
       ) : (
-        <AccordionGroup sx={{ maxWidth: 900 }}>
+        <AccordionGroup>
           {concertList.map(({ concert, setlist }) => {
             const setGroups = groupBySetName(setlist);
             return (
               <Accordion key={concert.id}>
                 <AccordionSummary>
-                  <Typography level="title-md">
-                    {formatDate(concert.date)} — {concert.venue} — {concert.city}
-                    {concert.state ? `, ${concert.state}` : ''}
-                  </Typography>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography level="title-md">{formatDate(concert.date)}</Typography>
+                    <Typography level="body-md" sx={{ color: 'text.secondary', wordBreak: 'break-word' }}>
+                      {concert.venue} — {concert.city}
+                      {concert.state ? `, ${concert.state}` : ''}
+                    </Typography>
+                  </Box>
                 </AccordionSummary>
                 <AccordionDetails>
                   {concert.notes ? (

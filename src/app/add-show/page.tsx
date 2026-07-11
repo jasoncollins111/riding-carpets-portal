@@ -115,7 +115,14 @@ export default function AddShow() {
   };
 
   return (
-    <Grid container spacing={4} sx={{ height: '100vh', width: '100vw', ml: '50px', mt: '50px', flexGrow: 1, display: 'flex' }}>
+    <Box
+      sx={{
+        px: { xs: 2, sm: 3, md: 6 },
+        py: { xs: 2, md: 4 },
+        maxWidth: 1200,
+        mx: 'auto',
+      }}
+    >
       {openSongModal ? (
         <AddSongModal
           handleOpen={setOpenSongModal}
@@ -126,60 +133,68 @@ export default function AddShow() {
           setSetlist={setSetlist}
         />
       ) : null}
-      <Grid xs={4}>
-        <Box sx={{ justifyContent: 'center', flexDirection: 'column' }} className="flex">
-          <Typography level="h1">Add Show</Typography>
-          <Box>
-            <FormControl>
-              <Stack spacing={1}>
-                <Input placeholder="Venue" value={venue} onChange={(e) => setVenue(e.target.value)} />
-                <Input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-                <Input placeholder="State" value={state} onChange={(e) => setState(e.target.value)} />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
-                </LocalizationProvider>
-                <Textarea minRows={6} placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
-                <Box>
-                  {Object.keys(setlist).map((key) => (
-                    <Checkbox
-                      key={key}
-                      onClick={() => setCurrentList(key)}
-                      checked={key === currentList}
-                      value={key}
-                      label={key}
-                    />
-                  ))}
-                </Box>
-                <Input
-                  placeholder="Search songs..."
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    searchSongs(e.target.value);
-                  }}
-                  sx={{ mb: 1 }}
-                  value={searchTerm}
-                />
-                {filteredSongList?.map((item) => (
-                  <Link onClick={() => addSong(item.song)} key={item.id}>
-                    {item.song}
-                  </Link>
-                ))}
-                {submitError ? <Alert color="danger">{submitError}</Alert> : null}
-                <Button onClick={submitShow} loading={isSubmitting} disabled={isSubmitting}>
-                  Submit
-                </Button>
-              </Stack>
-            </FormControl>
+      <Grid container spacing={{ xs: 2, md: 4 }}>
+        <Grid xs={12} md={4}>
+          <Box sx={{ justifyContent: 'center', flexDirection: 'column' }} className="flex">
+            <Typography level="h1">Add Show</Typography>
+            <Box>
+              <FormControl sx={{ width: '100%' }}>
+                <Stack spacing={1}>
+                  <Input placeholder="Venue" value={venue} onChange={(e) => setVenue(e.target.value)} />
+                  <Input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+                  <Input placeholder="State" value={state} onChange={(e) => setState(e.target.value)} />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
+                  </LocalizationProvider>
+                  <Textarea minRows={6} placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {Object.keys(setlist).map((key) => (
+                      <Checkbox
+                        key={key}
+                        onClick={() => setCurrentList(key)}
+                        checked={key === currentList}
+                        value={key}
+                        label={key}
+                      />
+                    ))}
+                  </Box>
+                  <Input
+                    placeholder="Search songs..."
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      searchSongs(e.target.value);
+                    }}
+                    sx={{ mb: 1 }}
+                    value={searchTerm}
+                  />
+                  <Box sx={{ maxHeight: 240, overflowY: 'auto' }}>
+                    {filteredSongList?.map((item) => (
+                      <Link
+                        onClick={() => addSong(item.song)}
+                        key={item.id}
+                        sx={{ display: 'block', py: 1.25, minHeight: 44 }}
+                      >
+                        {item.song}
+                      </Link>
+                    ))}
+                  </Box>
+                  {submitError ? <Alert color="danger">{submitError}</Alert> : null}
+                  <Button onClick={submitShow} loading={isSubmitting} disabled={isSubmitting}>
+                    Submit
+                  </Button>
+                </Stack>
+              </FormControl>
+            </Box>
           </Box>
-        </Box>
+        </Grid>
+        <Grid xs={12} md={8}>
+          {Object.keys(setlist).map((key) =>
+            setlist[key].length > 0 ? (
+              <SetlistCard key={key} setlist={setlist[key]} setlistTitle={key} />
+            ) : null,
+          )}
+        </Grid>
       </Grid>
-      <Grid xs={8}>
-        {Object.keys(setlist).map((key) =>
-          setlist[key].length > 0 ? (
-            <SetlistCard key={key} setlist={setlist[key]} setlistTitle={key} />
-          ) : null,
-        )}
-      </Grid>
-    </Grid>
+    </Box>
   );
 }

@@ -99,16 +99,16 @@ export default function ShowPage() {
       <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
         &larr; Back to Setlists
       </Link>
-      <h1 className="text-3xl font-bold">
+      <h1 className="text-3xl font-bold break-words">
         {formatDate(show.date)} — {show.venue}
       </h1>
-      <p className="text-gray-600 mb-6 mt-1">
+      <p className="text-gray-600 mb-6 mt-1 break-words">
         {show.city}
         {show.state ? `, ${show.state}` : ''}
       </p>
 
       {show.lineup ? (
-        <p className="mb-2">
+        <p className="mb-2 break-words">
           <span className="font-semibold">Lineup:</span> {show.lineup}
         </p>
       ) : null}
