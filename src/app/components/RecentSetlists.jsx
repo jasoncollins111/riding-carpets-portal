@@ -16,6 +16,7 @@ import {
 } from '@mui/joy';
 import axios from 'axios';
 import SetlistCard from './SetlistCard';
+import { ShowNotes } from './ShowNotes';
 
 const YEARS = ['2025', '2024', '2023', '2022', '2021', '2020'];
 
@@ -157,11 +158,6 @@ export default function RecentSetlists() {
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {concert.notes ? (
-                    <Typography level="body-sm" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
-                      <strong>Notes:</strong> {concert.notes}
-                    </Typography>
-                  ) : null}
                   {setGroups.map((group) => (
                     <SetlistCard
                       key={`${concert.id}-${group.title}`}
@@ -172,6 +168,7 @@ export default function RecentSetlists() {
                   {!setlist.length ? (
                     <Typography level="body-sm">No setlist recorded.</Typography>
                   ) : null}
+                  <ShowNotes notes={concert.notes} />
                 </AccordionDetails>
               </Accordion>
             );

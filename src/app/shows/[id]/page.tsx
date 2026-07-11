@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import SetlistCard from '../../components/SetlistCard';
+import { parseNoteLines } from '../../components/ShowNotes';
 
 interface Show {
   id: number;
@@ -113,12 +114,6 @@ export default function ShowPage() {
         </p>
       ) : null}
 
-      {show.notes ? (
-        <p className="mb-4 whitespace-pre-wrap">
-          <span className="font-semibold">Notes:</span> {show.notes}
-        </p>
-      ) : null}
-
       {!setlist.length ? (
         <p className="text-gray-600">No setlist recorded.</p>
       ) : (
@@ -132,6 +127,17 @@ export default function ShowPage() {
           ))}
         </div>
       )}
+
+      {show.notes ? (
+        <div className="mb-4 mt-4">
+          <p className="font-semibold">Notes:</p>
+          {parseNoteLines(show.notes).map((line, index) => (
+            <p key={`${index}-${line}`} className="mt-1 whitespace-pre-wrap">
+              {line}
+            </p>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
