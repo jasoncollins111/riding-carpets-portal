@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import SetlistCard from '../../components/SetlistCard';
-import { parseNoteLines } from '../../components/ShowNotes';
+import { ShowNotes } from '../../components/ShowNotes';
 
 interface Show {
   id: number;
@@ -14,7 +14,6 @@ interface Show {
   city: string;
   state: string | null;
   notes: string | null;
-  lineup: string | null;
   amount_earned: number | null;
 }
 
@@ -108,12 +107,6 @@ export default function ShowPage() {
         {show.state ? `, ${show.state}` : ''}
       </p>
 
-      {show.lineup ? (
-        <p className="mb-2 break-words">
-          <span className="font-semibold">Lineup:</span> {show.lineup}
-        </p>
-      ) : null}
-
       {!setlist.length ? (
         <p className="text-gray-600">No setlist recorded.</p>
       ) : (
@@ -128,16 +121,7 @@ export default function ShowPage() {
         </div>
       )}
 
-      {show.notes ? (
-        <div className="mb-4 mt-4">
-          <p className="font-semibold">Notes:</p>
-          {parseNoteLines(show.notes).map((line, index) => (
-            <p key={`${index}-${line}`} className="mt-1 whitespace-pre-wrap">
-              {line}
-            </p>
-          ))}
-        </div>
-      ) : null}
+      <ShowNotes notes={show.notes} />
     </div>
   );
 }
