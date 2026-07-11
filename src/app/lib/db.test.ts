@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { getConnectionString } from './db';
+import { getConnectionCandidates, getConnectionString } from './db';
 
 const ENV_KEYS = [
   'POSTGRES_PRISMA_URL',
@@ -61,5 +61,17 @@ describe('getConnectionString', () => {
 
   it('throws when no database URL is configured', () => {
     expect(() => getConnectionString()).toThrow(/Missing database URL/);
+    expect(getConnectionCandidates()).toEqual([]);
+  });
+
+  it('returns all unique connection candidates in priority order', () => {
+    process.env.POSTGRES_PRISMA_URL = 'postgres://pooled';
+    process.env.POSTGRES_URL = 'postgres://direct';
+    process.env.POSTGRES_URL_NON_POOLING = 'postgres://direct';
+
+    expect(getConnectionCandidates()).toEqual([
+      { source: 'POSTGRES_PRISMA_URL', url: 'postgres://pooled' },
+      { source: 'POSTGRES_URL', url: 'postgres://direct' },
+    ]);
   });
 });

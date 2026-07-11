@@ -19,6 +19,7 @@
     "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.4.0",
     "@mui/x-date-pickers": "^7.23.6",
+    "@vercel/functions": "^3.7.5",
     "axios": "^1.7.2",
     "dayjs": "^1.11.12",
     "next": "^15.0.7",
