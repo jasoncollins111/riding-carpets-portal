@@ -78,25 +78,25 @@ export default function SongShowsPage() {
   }, [id]);
 
   if (isLoading) {
-    return <div className="container mx-auto px-4 py-8">Loading shows...</div>;
+    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Loading shows...</div>;
   }
 
   if (error) {
-    return <div className="container mx-auto px-4 py-8">Error: {error}</div>;
+    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Error: {error}</div>;
   }
 
   if (!song) {
-    return <div className="container mx-auto px-4 py-8">Song not found.</div>;
+    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Song not found.</div>;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link href="/songs" className="text-blue-600 hover:underline mb-4 inline-block">
+    <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">
+      <Link href="/songs" className="text-blue-600 hover:underline mb-4 inline-block min-h-11 leading-[44px]">
         &larr; Back to Songs
       </Link>
-      <h1 className="text-3xl font-bold break-words">{song.song}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold break-words">{song.song}</h1>
       {stats && stats.play_count > 0 ? (
-        <div className="text-gray-700 space-y-2 mb-6 mt-4">
+        <div className="text-gray-700 space-y-2 mb-6 mt-4 text-base">
           <p>
             {song.song} was played at {stats.percent_of_shows}% of live shows.
           </p>
@@ -132,15 +132,17 @@ export default function SongShowsPage() {
         <p className="text-gray-600 mb-6 mt-1">This song has not been played at any shows yet.</p>
       )}
       {!shows.length ? null : (
-        <ul className="space-y-3">
+        <ul className="space-y-3 w-full min-w-0">
           {shows.map((show) => (
-            <li key={show.id}>
+            <li key={show.id} className="w-full min-w-0">
               <Link
                 href={`/shows/${show.id}`}
-                className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow block"
+                className="w-full min-w-0 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md active:bg-gray-50 transition-shadow block text-gray-900"
               >
-                <p className="text-lg font-semibold break-words">
-                  {formatDate(show.date)} — {show.venue} — {show.city}
+                <p className="text-base sm:text-lg font-semibold">{formatDate(show.date)}</p>
+                <p className="text-sm sm:text-base text-gray-700 break-words mt-0.5">{show.venue}</p>
+                <p className="text-sm text-gray-500 break-words">
+                  {show.city}
                   {show.state ? `, ${show.state}` : ''}
                 </p>
               </Link>
