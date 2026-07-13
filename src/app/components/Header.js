@@ -4,7 +4,6 @@ import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import {
   AppBar,
-  Avatar,
   Box,
   Drawer,
   IconButton,
@@ -12,8 +11,6 @@ import {
   List,
   ListItemButton,
   ListItemText,
-  Menu,
-  MenuItem,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -24,25 +21,10 @@ const pages = [
   { link: '/songs', title: 'Songs' },
   { link: '/stats', title: 'Stats' },
 ];
-const settings = [
-  { link: '/add-song', title: 'Add Song' },
-  { link: '/add-show', title: 'Add Show' },
-];
-
-const allNavItems = [...pages, ...settings];
 
 export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
 
   const handleCloseMobile = () => {
     setMobileOpen(false);
@@ -59,7 +41,7 @@ export default function Header() {
         RC Portal
       </Typography>
       <List>
-        {allNavItems.map((item) => (
+        {pages.map((item) => (
           <ListItemButton
             key={item.title}
             component="a"
@@ -126,36 +108,6 @@ export default function Header() {
                 {page.title}
               </Link>
             ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'block' } }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 1, minWidth: 44, minHeight: 44 }}>
-              <Avatar alt="RC Portal" sx={{ width: 36, height: 36 }} />
-            </IconButton>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting.title} onClick={handleCloseUserMenu} sx={{ minHeight: 48 }}>
-                  <Link sx={{ textAlign: 'center', width: '100%' }} href={setting.link}>
-                    {setting.title}
-                  </Link>
-                </MenuItem>
-              ))}
-            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
