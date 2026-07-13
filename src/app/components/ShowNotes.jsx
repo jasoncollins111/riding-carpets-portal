@@ -9,7 +9,7 @@ export function parseNoteLines(notes) {
     .filter(Boolean);
 }
 
-export function ShowNotes({ notes, sx }) {
+export function ShowNotes({ notes, sx = {} }) {
   const lines = parseNoteLines(notes);
   if (!lines.length) return null;
 
