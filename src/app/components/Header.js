@@ -22,6 +22,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 const pages = [
   { link: '/', title: 'Setlists' },
   { link: '/songs', title: 'Songs' },
+  { link: '/stats', title: 'Stats' },
 ];
 const settings = [
   { link: '/add-song', title: 'Add Song' },
