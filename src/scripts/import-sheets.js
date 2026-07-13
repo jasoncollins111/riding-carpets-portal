@@ -49,6 +49,11 @@ function getColumn(row, colName) {
   return cellValue(cell).trim();
 }
 
+function isNoKnownSetlist(setlistRaw) {
+  if (!setlistRaw) return false;
+  return /^\*?\s*no known setlist\s*\*?\s*$/i.test(setlistRaw.trim());
+}
+
 async function upsertShow(show) {
   const existing = await sql`
     SELECT id FROM shows WHERE date = ${show.date} AND venue = ${show.venue}
@@ -119,8 +124,9 @@ async function importTab(sheetName) {
     const amountRaw = getColumn(data, config.columns.amountEarned);
     const amount_earned = amountRaw ? parseFloat(amountRaw.replace(/[^0-9.]/g, '')) || null : null;
 
-    const songs = parseSetlistText(setlistRaw);
-    if (!songs.length) {
+    const noKnownSetlist = isNoKnownSetlist(setlistRaw);
+    const songs = noKnownSetlist ? [] : parseSetlistText(setlistRaw);
+    if (!noKnownSetlist && !songs.length) {
       skipped++;
       continue;
     }

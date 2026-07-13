@@ -29,6 +29,7 @@ export async function GET() {
       openersResult,
       closersResult,
       gapsResult,
+      droughtsResult,
     ] = await Promise.all([
       sql`
         SELECT
@@ -54,7 +55,7 @@ export async function GET() {
         JOIN setlists sl ON s.id = sl.song_id
         GROUP BY s.id, s.song
         ORDER BY count DESC, s.song ASC
-        LIMIT 15
+        LIMIT 10
       `,
       sql`
         SELECT s.id, s.song, COUNT(DISTINCT sl.show_id)::int AS count
@@ -62,7 +63,7 @@ export async function GET() {
         JOIN setlists sl ON s.id = sl.song_id
         GROUP BY s.id, s.song
         ORDER BY count ASC, s.song ASC
-        LIMIT 15
+        LIMIT 10
       `,
       sql`
         WITH show_openers AS (
@@ -78,7 +79,7 @@ export async function GET() {
         FROM show_openers
         GROUP BY song_id, song_name
         ORDER BY count DESC, song_name ASC
-        LIMIT 15
+        LIMIT 10
       `,
       sql`
         WITH show_closers AS (
@@ -94,7 +95,7 @@ export async function GET() {
         FROM show_closers
         GROUP BY song_id, song_name
         ORDER BY count DESC, song_name ASC
-        LIMIT 15
+        LIMIT 10
       `,
       sql`
         WITH distinct_plays AS (
@@ -131,6 +132,32 @@ export async function GET() {
         ORDER BY shows_between DESC
         LIMIT 10
       `,
+      sql`
+        WITH last_plays AS (
+          SELECT DISTINCT ON (sl.song_id)
+            sl.song_id,
+            sl.song_name,
+            s.date AS last_played_date,
+            s.id AS last_show_id
+          FROM setlists sl
+          JOIN shows s ON sl.show_id = s.id
+          ORDER BY sl.song_id, s.date DESC
+        ),
+        droughts AS (
+          SELECT
+            song_id,
+            song_name,
+            last_played_date,
+            last_show_id,
+            (
+              SELECT COUNT(*)::int FROM shows WHERE date > last_plays.last_played_date
+            ) AS shows_since_last_played
+          FROM last_plays
+        )
+        SELECT * FROM droughts
+        ORDER BY shows_since_last_played DESC, song_name ASC
+        LIMIT 10
+      `,
     ]);
 
     const overview = overviewResult.rows[0] ?? {
@@ -159,6 +186,7 @@ export async function GET() {
         openers: addPercent(openersResult.rows as RankedRow[], totalShows),
         closers: addPercent(closersResult.rows as RankedRow[], totalShows),
         longest_gaps: gapsResult.rows,
+        current_droughts: droughtsResult.rows,
       },
       { status: 200 },
     );

@@ -17,16 +17,9 @@ import {
 import axios from 'axios';
 import SetlistCard from './SetlistCard';
 import { ShowNotes } from './ShowNotes';
+import { formatDate } from '@/app/lib/format-date';
 
 const YEARS = ['2025', '2024', '2023', '2022', '2021', '2020'];
-
-function formatDate(rawDate) {
-  const date = new Date(rawDate);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
-}
 
 function groupBySetName(songs) {
   const groups = [];

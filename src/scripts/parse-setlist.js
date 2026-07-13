@@ -1,9 +1,14 @@
-const SET_HEADER_REGEX = /^Set\s*(I{1,3}|IV|1|2|3|4)\s*:?\s*$/i;
+const SET_HEADER_REGEX = /^Set\s*(I{1,3}|IV|1|2|3|4)\s*:?\s*$|^(\d+(?:st|nd|rd|th))\s+Set\s*:?\s*$/i;
 const ENCORE_HEADER_REGEX = /^(E:|Encore)\s*:?\s*$/i;
 
 function normalizeSetName(line) {
   const trimmed = line.trim();
   if (ENCORE_HEADER_REGEX.test(trimmed)) return 'Encore';
+  const ordinalMatch = trimmed.match(/^(\d+(?:st|nd|rd|th))\s+Set\s*:?\s*$/i);
+  if (ordinalMatch) {
+    const ordinal = { '1st': 'Set I', '2nd': 'Set II', '3rd': 'Set III', '4th': 'Set IV' };
+    return ordinal[ordinalMatch[1].toLowerCase()] || trimmed;
+  }
   const match = trimmed.match(/^Set\s*(I{1,3}|IV|1|2|3|4)\s*:?\s*$/i);
   if (!match) return trimmed;
   const token = match[1].toUpperCase();

@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import axios from 'axios';
 import SetlistCard from '../../components/SetlistCard';
 import { ShowNotes } from '../../components/ShowNotes';
+import { formatDate } from '@/app/lib/format-date';
 
 interface Show {
   id: number;
@@ -26,14 +27,6 @@ interface SetlistSong {
   minutes: number | null;
   seconds: number | null;
   footnote_refs: string | null;
-}
-
-function formatDate(rawDate: string) {
-  const date = new Date(rawDate);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
 }
 
 function groupBySetName(songs: SetlistSong[]) {

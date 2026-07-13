@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
+import { formatDate, formatLongDate } from '@/app/lib/format-date';
 
 interface Song {
   id: number;
@@ -28,22 +29,6 @@ interface Show {
   venue: string;
   city: string;
   state: string | null;
-}
-
-function formatDate(rawDate: string) {
-  const date = new Date(rawDate);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
-}
-
-function formatLongDate(rawDate: string) {
-  return new Date(rawDate).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 function formatNumber(value: number) {
