@@ -96,16 +96,10 @@ export default function SongShowsPage() {
             There have been {formatNumber(stats.shows_since_debut)} shows since the live debut.
           </p>
           {stats.avg_every_n_shows !== null && (
-            <>
-              <p>
-                &ldquo;{song.song}&rdquo; has been played approximately once every{' '}
-                {stats.avg_every_n_shows} shows.
-              </p>
-              <p>
-                Since its debut, &ldquo;{song.song}&rdquo; has been played, on average, once every{' '}
-                {stats.avg_every_n_shows} shows.
-              </p>
-            </>
+            <p>
+              Since its debut, &ldquo;{song.song}&rdquo; has been played, on average, once every{' '}
+              {stats.avg_every_n_shows} shows.
+            </p>
           )}
           <p>
             It was played {formatNumber(stats.play_count)}{' '}
