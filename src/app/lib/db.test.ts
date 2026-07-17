@@ -20,12 +20,12 @@ describe('getConnectionString', () => {
     }
   });
 
-  it('prefers the pooled Vercel Postgres URL for runtime queries', () => {
-    process.env.POSTGRES_PRISMA_URL = 'postgres://pooled';
-    process.env.POSTGRES_URL = 'postgres://direct-ish';
+  it('prefers POSTGRES_URL for runtime queries', () => {
+    process.env.POSTGRES_PRISMA_URL = 'postgres://prisma';
+    process.env.POSTGRES_URL = 'postgres://direct';
     process.env.POSTGRES_URL_NON_POOLING = 'postgres://non-pooling';
 
-    expect(getConnectionString()).toBe('postgres://pooled');
+    expect(getConnectionString()).toBe('postgres://direct');
   });
 
   it('skips empty or placeholder env values', () => {
@@ -70,8 +70,8 @@ describe('getConnectionString', () => {
     process.env.POSTGRES_URL_NON_POOLING = 'postgres://direct';
 
     expect(getConnectionCandidates()).toEqual([
-      { source: 'POSTGRES_PRISMA_URL', url: 'postgres://pooled' },
       { source: 'POSTGRES_URL', url: 'postgres://direct' },
+      { source: 'POSTGRES_PRISMA_URL', url: 'postgres://pooled' },
     ]);
   });
 });

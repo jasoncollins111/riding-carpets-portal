@@ -1,4 +1,3 @@
-import { attachDatabasePool } from '@vercel/functions';
 import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 declare global {
@@ -18,9 +17,9 @@ const CONNECTION_ERROR_CODES = new Set([
 ]);
 
 const CONNECTION_ENV_KEYS = [
-  'POSTGRES_PRISMA_URL',
   'POSTGRES_URL',
   'DATABASE_URL',
+  'POSTGRES_PRISMA_URL',
   'PRISMA_DATABASE_URL',
   'POSTGRES_URL_NON_POOLING',
 ] as const;
@@ -166,6 +165,7 @@ function createPool(connectionString: string): Pool {
   });
 
   try {
+    const { attachDatabasePool } = require('@vercel/functions');
     attachDatabasePool(pool);
   } catch (error) {
     console.error('attachDatabasePool unavailable:', error);
