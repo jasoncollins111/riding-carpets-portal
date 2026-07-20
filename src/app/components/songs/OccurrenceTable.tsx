@@ -199,7 +199,11 @@ export default function OccurrenceTable({ occurrences }: { occurrences: SongOccu
                 )}
               </td>
               <td className="px-3 py-3">
-                <SongLink songId={occurrence.song_after_id} songName={occurrence.song_after_name} />
+                {occurrence.song_after_name ? (
+                  <SongLink songId={occurrence.song_after_id} songName={occurrence.song_after_name} />
+                ) : (
+                  '***'
+                )}
               </td>
               <td className="px-3 py-3">{occurrence.footnote_text ?? ''}</td>
             </tr>

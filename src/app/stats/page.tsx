@@ -43,10 +43,27 @@ interface CurrentDrought {
 interface StatsData {
   overview: Overview;
   most_played: RankedSong[];
-  openers: RankedSong[];
-  closers: RankedSong[];
+  set_openers: Record<string, RankedSong[]>;
+  set_closers: Record<string, RankedSong[]>;
   longest_gaps: LongestGap[];
   current_droughts: CurrentDrought[];
+}
+
+const SET_ORDER = ['Set I', 'Set II', 'Set III', 'Set IV', 'Encore', 'Setlist'];
+
+function orderedSetNames(
+  openers: Record<string, RankedSong[]>,
+  closers: Record<string, RankedSong[]>,
+): string[] {
+  const names = new Set([...Object.keys(openers), ...Object.keys(closers)]);
+  return [...names].sort((a, b) => {
+    const ai = SET_ORDER.indexOf(a);
+    const bi = SET_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
 }
 
 export default function StatsPage() {
@@ -88,6 +105,7 @@ export default function StatsPage() {
   }
 
   const { overview } = stats;
+  const setNames = orderedSetNames(stats.set_openers, stats.set_closers);
 
   return (
     <div className="container mx-auto px-4 py-8 text-gray-900">
@@ -108,19 +126,34 @@ export default function StatsPage() {
           <h2 className="text-xl font-semibold mb-4">Most Played Songs</h2>
           <RankedList items={stats.most_played} countLabel="shows" />
         </section>
-
-        <section className="p-5 border border-gray-200 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Most Common Show Openers</h2>
-          <p className="text-sm text-gray-500 mb-3">First song of the night</p>
-          <RankedList items={stats.openers} countLabel="times" />
-        </section>
-
-        <section className="p-5 border border-gray-200 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Most Common Show Closers</h2>
-          <p className="text-sm text-gray-500 mb-3">Last song of the night</p>
-          <RankedList items={stats.closers} countLabel="times" />
-        </section>
       </div>
+
+      {setNames.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+          {setNames.flatMap((setName) => [
+            <section
+              key={`${setName}-openers`}
+              className="p-5 border border-gray-200 rounded-lg shadow-sm"
+            >
+              <h2 className="text-xl font-semibold mb-4">
+                Most Common {setName} Openers
+              </h2>
+              <p className="text-sm text-gray-500 mb-3">First song of the set</p>
+              <RankedList items={stats.set_openers[setName] ?? []} countLabel="times" />
+            </section>,
+            <section
+              key={`${setName}-closers`}
+              className="p-5 border border-gray-200 rounded-lg shadow-sm"
+            >
+              <h2 className="text-xl font-semibold mb-4">
+                Most Common {setName} Closers
+              </h2>
+              <p className="text-sm text-gray-500 mb-3">Last song of the set</p>
+              <RankedList items={stats.set_closers[setName] ?? []} countLabel="times" />
+            </section>,
+          ])}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <section className="p-5 border border-gray-200 rounded-lg shadow-sm">

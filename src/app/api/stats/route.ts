@@ -10,14 +10,44 @@ interface RankedRow {
   count: number;
 }
 
-function addPercent(rows: RankedRow[], totalShows: number) {
+function addPercent(rows: RankedRow[], total: number) {
   return rows.map((row) => ({
     ...row,
     percent:
-      totalShows > 0
-        ? Number(((row.count / totalShows) * 100).toFixed(1))
-        : 0,
+      total > 0 ? Number(((row.count / total) * 100).toFixed(1)) : 0,
   }));
+}
+
+interface SetRankedRow extends RankedRow {
+  set_name: string | null;
+}
+
+function setDisplayName(setName: string | null): string {
+  return setName ?? 'Setlist';
+}
+
+function groupBySet(
+  rows: SetRankedRow[],
+  setTotals: Map<string | null, number>,
+  limit = 10,
+): Record<string, RankedRow[]> {
+  const grouped: Record<string, RankedRow[]> = {};
+
+  for (const row of rows) {
+    const key = setDisplayName(row.set_name);
+    if (!grouped[key]) grouped[key] = [];
+    if (grouped[key].length >= limit) continue;
+
+    const total = setTotals.get(row.set_name) ?? 0;
+    grouped[key].push({
+      id: row.id,
+      song: row.song,
+      count: row.count,
+      percent: total > 0 ? Number(((row.count / total) * 100).toFixed(1)) : 0,
+    });
+  }
+
+  return grouped;
 }
 
 export async function GET() {
@@ -27,6 +57,7 @@ export async function GET() {
       mostPlayedResult,
       openersResult,
       closersResult,
+      setTotalsResult,
       gapsResult,
       droughtsResult,
     ] = await Promise.all([
@@ -57,36 +88,47 @@ export async function GET() {
         LIMIT 10
       `,
       sql`
-        WITH show_openers AS (
-          SELECT sl.song_id, sl.song_name
+        WITH set_openers AS (
+          SELECT sl.song_id, sl.song_name, sl.set_name
           FROM setlists sl
           JOIN (
-            SELECT show_id, MIN(position) AS min_pos
+            SELECT show_id, set_name, MIN(position) AS min_pos
             FROM setlists
-            GROUP BY show_id
-          ) first ON sl.show_id = first.show_id AND sl.position = first.min_pos
+            GROUP BY show_id, set_name
+          ) first
+            ON sl.show_id = first.show_id
+           AND sl.set_name IS NOT DISTINCT FROM first.set_name
+           AND sl.position = first.min_pos
         )
-        SELECT song_id AS id, song_name AS song, COUNT(*)::int AS count
-        FROM show_openers
-        GROUP BY song_id, song_name
-        ORDER BY count DESC, song_name ASC
-        LIMIT 10
+        SELECT set_name, song_id AS id, song_name AS song, COUNT(*)::int AS count
+        FROM set_openers
+        GROUP BY set_name, song_id, song_name
+        ORDER BY set_name NULLS LAST, count DESC, song_name ASC
       `,
       sql`
-        WITH show_closers AS (
-          SELECT sl.song_id, sl.song_name
+        WITH set_closers AS (
+          SELECT sl.song_id, sl.song_name, sl.set_name
           FROM setlists sl
           JOIN (
-            SELECT show_id, MAX(position) AS max_pos
+            SELECT show_id, set_name, MAX(position) AS max_pos
             FROM setlists
-            GROUP BY show_id
-          ) last ON sl.show_id = last.show_id AND sl.position = last.max_pos
+            GROUP BY show_id, set_name
+          ) last
+            ON sl.show_id = last.show_id
+           AND sl.set_name IS NOT DISTINCT FROM last.set_name
+           AND sl.position = last.max_pos
         )
-        SELECT song_id AS id, song_name AS song, COUNT(*)::int AS count
-        FROM show_closers
-        GROUP BY song_id, song_name
-        ORDER BY count DESC, song_name ASC
-        LIMIT 10
+        SELECT set_name, song_id AS id, song_name AS song, COUNT(*)::int AS count
+        FROM set_closers
+        GROUP BY set_name, song_id, song_name
+        ORDER BY set_name NULLS LAST, count DESC, song_name ASC
+      `,
+      sql`
+        SELECT set_name, COUNT(*)::int AS total
+        FROM (
+          SELECT DISTINCT show_id, set_name FROM setlists
+        ) sub
+        GROUP BY set_name
       `,
       sql`
         WITH distinct_plays AS (
@@ -162,6 +204,10 @@ export async function GET() {
 
     const totalShows = overview.total_shows || 0;
 
+    const setTotals = new Map<string | null, number>(
+      setTotalsResult.rows.map((row) => [row.set_name as string | null, row.total as number]),
+    );
+
     return NextResponse.json(
       {
         overview: {
@@ -173,8 +219,8 @@ export async function GET() {
           avg_setlist_length: Number(overview.avg_setlist_length) || 0,
         },
         most_played: addPercent(mostPlayedResult.rows as RankedRow[], totalShows),
-        openers: addPercent(openersResult.rows as RankedRow[], totalShows),
-        closers: addPercent(closersResult.rows as RankedRow[], totalShows),
+        set_openers: groupBySet(openersResult.rows as SetRankedRow[], setTotals),
+        set_closers: groupBySet(closersResult.rows as SetRankedRow[], setTotals),
         longest_gaps: gapsResult.rows,
         current_droughts: droughtsResult.rows,
       },

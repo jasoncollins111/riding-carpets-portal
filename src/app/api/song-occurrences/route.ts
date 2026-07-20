@@ -73,20 +73,24 @@ export async function GET(request: NextRequest) {
         wg.show_gap,
         CASE
           WHEN prev.song_id IS NULL THEN NULL
-          WHEN wg.set_name IS NOT NULL
-            AND prev.set_name IS NOT NULL
-            AND prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          WHEN prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
           ELSE prev.song_id
         END AS song_before_id,
         CASE
           WHEN prev.song_id IS NULL THEN NULL
-          WHEN wg.set_name IS NOT NULL
-            AND prev.set_name IS NOT NULL
-            AND prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          WHEN prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
           ELSE prev.song_name
         END AS song_before_name,
-        nxt.song_id AS song_after_id,
-        nxt.song_name AS song_after_name
+        CASE
+          WHEN nxt.song_id IS NULL THEN NULL
+          WHEN nxt.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          ELSE nxt.song_id
+        END AS song_after_id,
+        CASE
+          WHEN nxt.song_id IS NULL THEN NULL
+          WHEN nxt.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          ELSE nxt.song_name
+        END AS song_after_name
       FROM with_gap wg
       LEFT JOIN setlists prev ON prev.show_id = wg.show_id AND prev.position = wg.position - 1
       LEFT JOIN setlists nxt ON nxt.show_id = wg.show_id AND nxt.position = wg.position + 1
