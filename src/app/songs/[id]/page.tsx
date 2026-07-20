@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
-import { formatDate, formatLongDate } from '@/app/lib/format-date';
+import { formatLongDate } from '@/app/lib/format-date';
+import OccurrenceTable, { type SongOccurrence } from '@/app/components/songs/OccurrenceTable';
 
 interface Song {
   id: number;
@@ -23,14 +24,6 @@ interface SongStats {
   avg_every_n_shows: number | null;
 }
 
-interface Show {
-  id: number;
-  date: string;
-  venue: string;
-  city: string;
-  state: string | null;
-}
-
 function formatNumber(value: number) {
   return value.toLocaleString('en-US');
 }
@@ -40,42 +33,45 @@ export default function SongShowsPage() {
   const id = params.id as string;
 
   const [song, setSong] = useState<Song | null>(null);
-  const [shows, setShows] = useState<Show[]>([]);
+  const [occurrences, setOccurrences] = useState<SongOccurrence[]>([]);
   const [stats, setStats] = useState<SongStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchShows = async () => {
+    const fetchSongData = async () => {
       try {
-        const response = await axios.get('/api/song-shows', { params: { id } });
-        setSong(response.data?.song ?? null);
-        setShows(response.data?.shows ?? []);
-        setStats(response.data?.stats ?? null);
+        const [showsResponse, occurrencesResponse] = await Promise.all([
+          axios.get('/api/song-shows', { params: { id } }),
+          axios.get('/api/song-occurrences', { params: { id } }),
+        ]);
+        setSong(showsResponse.data?.song ?? occurrencesResponse.data?.song ?? null);
+        setStats(showsResponse.data?.stats ?? null);
+        setOccurrences(occurrencesResponse.data?.occurrences ?? []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load shows');
+        setError(err instanceof Error ? err.message : 'Failed to load song data');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchShows();
+    fetchSongData();
   }, [id]);
 
   if (isLoading) {
-    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Loading shows...</div>;
+    return <div className="w-full max-w-6xl mx-auto px-4 py-8 text-gray-900">Loading shows...</div>;
   }
 
   if (error) {
-    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Error: {error}</div>;
+    return <div className="w-full max-w-6xl mx-auto px-4 py-8 text-gray-900">Error: {error}</div>;
   }
 
   if (!song) {
-    return <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">Song not found.</div>;
+    return <div className="w-full max-w-6xl mx-auto px-4 py-8 text-gray-900">Song not found.</div>;
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-8 text-gray-900">
+    <div className="w-full max-w-6xl mx-auto px-4 py-8 text-gray-900">
       <Link href="/songs" className="text-blue-600 hover:underline mb-4 inline-block min-h-11 leading-[44px]">
         &larr; Back to Songs
       </Link>
@@ -103,32 +99,13 @@ export default function SongShowsPage() {
           )}
           <p>
             It was played {formatNumber(stats.play_count)}{' '}
-            {stats.play_count === 1 ? 'time' : 'times'} at the following{' '}
-            {stats.show_count === 1 ? 'show' : 'shows'}:
+            {stats.play_count === 1 ? 'time' : 'times'}:
           </p>
         </div>
       ) : (
         <p className="text-gray-600 mb-6 mt-1">This song has not been played at any shows yet.</p>
       )}
-      {!shows.length ? null : (
-        <ul className="space-y-3 w-full min-w-0">
-          {shows.map((show) => (
-            <li key={show.id} className="w-full min-w-0">
-              <Link
-                href={`/shows/${show.id}`}
-                className="w-full min-w-0 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md active:bg-gray-50 transition-shadow block text-gray-900"
-              >
-                <p className="text-base sm:text-lg font-semibold">{formatDate(show.date)}</p>
-                <p className="text-sm sm:text-base text-gray-700 break-words mt-0.5">{show.venue}</p>
-                <p className="text-sm text-gray-500 break-words">
-                  {show.city}
-                  {show.state ? `, ${show.state}` : ''}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      {occurrences.length > 0 && <OccurrenceTable occurrences={occurrences} />}
     </div>
   );
 }

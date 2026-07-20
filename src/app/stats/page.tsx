@@ -11,7 +11,6 @@ interface Overview {
   total_shows: number;
   unique_songs_played: number;
   total_plays: number;
-  catalog_size: number;
   unplayed_count: number;
   avg_setlist_length: number;
 }
@@ -44,7 +43,6 @@ interface CurrentDrought {
 interface StatsData {
   overview: Overview;
   most_played: RankedSong[];
-  rarest: RankedSong[];
   openers: RankedSong[];
   closers: RankedSong[];
   longest_gaps: LongestGap[];
@@ -99,22 +97,16 @@ export default function StatsPage() {
         {overview.total_shows === 1 ? 'show' : 'shows'}
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
         <StatCard label="Total Shows" value={overview.total_shows} />
         <StatCard label="Songs Played" value={overview.unique_songs_played} />
         <StatCard label="Total Plays" value={overview.total_plays} />
-        <StatCard label="Song Catalog" value={overview.catalog_size} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         <section className="p-5 border border-gray-200 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Most Played Songs</h2>
           <RankedList items={stats.most_played} countLabel="shows" />
-        </section>
-
-        <section className="p-5 border border-gray-200 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Rarest Songs</h2>
-          <RankedList items={stats.rarest} countLabel="shows" />
         </section>
 
         <section className="p-5 border border-gray-200 rounded-lg shadow-sm">

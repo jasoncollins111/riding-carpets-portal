@@ -25,7 +25,6 @@ export async function GET() {
     const [
       overviewResult,
       mostPlayedResult,
-      rarestResult,
       openersResult,
       closersResult,
       gapsResult,
@@ -55,14 +54,6 @@ export async function GET() {
         JOIN setlists sl ON s.id = sl.song_id
         GROUP BY s.id, s.song
         ORDER BY count DESC, s.song ASC
-        LIMIT 10
-      `,
-      sql`
-        SELECT s.id, s.song, COUNT(DISTINCT sl.show_id)::int AS count
-        FROM songs s
-        JOIN setlists sl ON s.id = sl.song_id
-        GROUP BY s.id, s.song
-        ORDER BY count ASC, s.song ASC
         LIMIT 10
       `,
       sql`
@@ -182,7 +173,6 @@ export async function GET() {
           avg_setlist_length: Number(overview.avg_setlist_length) || 0,
         },
         most_played: addPercent(mostPlayedResult.rows as RankedRow[], totalShows),
-        rarest: addPercent(rarestResult.rows as RankedRow[], totalShows),
         openers: addPercent(openersResult.rows as RankedRow[], totalShows),
         closers: addPercent(closersResult.rows as RankedRow[], totalShows),
         longest_gaps: gapsResult.rows,
