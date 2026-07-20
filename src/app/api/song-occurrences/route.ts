@@ -72,11 +72,17 @@ export async function GET(request: NextRequest) {
         wg.show_notes,
         wg.show_gap,
         CASE
-          WHEN prev.set_name IS NULL OR prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          WHEN prev.song_id IS NULL THEN NULL
+          WHEN wg.set_name IS NOT NULL
+            AND prev.set_name IS NOT NULL
+            AND prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
           ELSE prev.song_id
         END AS song_before_id,
         CASE
-          WHEN prev.set_name IS NULL OR prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
+          WHEN prev.song_id IS NULL THEN NULL
+          WHEN wg.set_name IS NOT NULL
+            AND prev.set_name IS NOT NULL
+            AND prev.set_name IS DISTINCT FROM wg.set_name THEN NULL
           ELSE prev.song_name
         END AS song_before_name,
         nxt.song_id AS song_after_id,
