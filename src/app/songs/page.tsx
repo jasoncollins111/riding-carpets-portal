@@ -8,6 +8,7 @@ interface Song {
   id: number;
   song: string;
   show_count: number;
+  shows_since_last_played: number | null;
 }
 
 export default function SongsPage() {
@@ -53,6 +54,13 @@ export default function SongsPage() {
             <h2 className="text-xl font-semibold">{song.song}</h2>
             <p className="text-sm text-gray-500 mt-1">
               {song.show_count} {song.show_count === 1 ? 'show' : 'shows'}
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {song.show_count === 0
+                ? 'Never played'
+                : `${song.shows_since_last_played ?? 0} ${
+                    (song.shows_since_last_played ?? 0) === 1 ? 'show' : 'shows'
+                  } since last played`}
             </p>
           </Link>
         ))}
