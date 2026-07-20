@@ -8,6 +8,7 @@ interface RankedRow {
   id: number;
   song: string;
   count: number;
+  percent?: number;
 }
 
 function addPercent(rows: RankedRow[], total: number) {
