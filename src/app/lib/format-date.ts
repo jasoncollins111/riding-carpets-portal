@@ -1,4 +1,4 @@
-export function parseDateParts(rawDate: string): { year: number; month: number; day: number } | null {
+function parseDateParts(rawDate: string): { year: number; month: number; day: number } | null {
   const match = rawDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return null;
 

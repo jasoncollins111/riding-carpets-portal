@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "src/app/page.js", "src/app/components/AddSongModal.js", "src/app/components/RecentSetlists.jsx"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

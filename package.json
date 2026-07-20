@@ -12,6 +12,8 @@
     "lint": "next lint",
     "db:migrate": "node src/scripts/migrate.js",
     "db:import": "node src/scripts/import-sheets.js",
+    "db:cleanup-songs": "node src/scripts/cleanup-songs.js",
+    "db:merge-duplicates": "node src/scripts/merge-duplicate-songs.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },

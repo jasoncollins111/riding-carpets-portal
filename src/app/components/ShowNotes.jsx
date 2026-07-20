@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/joy';
 
-export function parseNoteLines(notes) {
+function parseNoteLines(notes) {
   if (!notes || typeof notes !== 'string') return [];
   return notes
     .split('\n')

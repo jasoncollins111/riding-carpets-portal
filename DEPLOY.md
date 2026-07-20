@@ -106,6 +106,21 @@ npm run db:migrate
 
 Migrations are idempotent — safe to re-run after schema changes.
 
+## Database Maintenance
+
+Run these locally against a Postgres database with env vars loaded (same prerequisites as migrate/import):
+
+```bash
+vercel env pull .env.local
+```
+
+| Script | Command | Purpose |
+|--------|---------|---------|
+| Cleanup orphans | `npm run db:cleanup-songs` | Removes songs in the catalog that are not referenced in any setlist |
+| Merge duplicates | `npm run db:merge-duplicates` | Merges duplicate song catalog entries (same name, different casing/spacing) and reassigns setlist references |
+
+These are one-off maintenance tools — run only when needed after imports or manual data edits.
+
 ### 4. (Optional) Import Google Sheets data
 
 The sheet must be publicly readable (uses the unauthenticated gviz API).
