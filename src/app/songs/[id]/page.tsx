@@ -72,7 +72,7 @@ export default function SongShowsPage() {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8 text-gray-900">
-      <Link href="/songs" className="text-blue-600 hover:underline mb-4 inline-block min-h-11 leading-[44px]">
+      <Link href="/songs" className="link-rc mb-4 inline-block min-h-11 leading-[44px]">
         &larr; Back to Songs
       </Link>
       <h1 className="text-2xl sm:text-3xl font-bold break-words">{song.song}</h1>

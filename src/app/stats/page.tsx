@@ -49,14 +49,17 @@ interface StatsData {
   current_droughts: CurrentDrought[];
 }
 
-const SET_ORDER = ['Set I', 'Set II', 'Set III', 'Set IV', 'Encore', 'Setlist'];
+const SET_ORDER = ['Set I', 'Set II', 'Setlist'];
+const EXCLUDED_SETS = new Set(['Set III', 'Set IV', 'Encore']);
 
 function orderedSetNames(
   openers: Record<string, RankedSong[]>,
   closers: Record<string, RankedSong[]>,
 ): string[] {
   const names = new Set([...Object.keys(openers), ...Object.keys(closers)]);
-  return [...names].sort((a, b) => {
+  return [...names]
+    .filter((name) => !EXCLUDED_SETS.has(name))
+    .sort((a, b) => {
     const ai = SET_ORDER.indexOf(a);
     const bi = SET_ORDER.indexOf(b);
     if (ai === -1 && bi === -1) return a.localeCompare(b);
@@ -174,7 +177,7 @@ export default function StatsPage() {
                     <p>
                       <Link
                         href={`/songs/${gap.song_id}`}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="link-rc font-medium"
                       >
                         {gap.song_name}
                       </Link>
@@ -227,7 +230,7 @@ export default function StatsPage() {
                     <p>
                       <Link
                         href={`/songs/${drought.song_id}`}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="link-rc font-medium"
                       >
                         {drought.song_name}
                       </Link>

@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Archivo_Narrow, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
+const archivoNarrow = Archivo_Narrow({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-archivo-narrow",
+});
 
 export const metadata: Metadata = {
   title: "Riding Carpets Portal",
   description: "Track shows, songs, and setlists for Riding Carpets.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -17,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} text-gray-900`} style={{ background: 'white', overflowX: 'hidden' }}>
+      <body
+        className={`${inter.className} ${archivoNarrow.variable} bg-rc-cream text-gray-900 overflow-x-hidden`}
+      >
         <Header />
         {children}
       </body>

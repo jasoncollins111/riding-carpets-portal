@@ -101,7 +101,7 @@ function SongLink({ songId, songName }: { songId: number | null; songName: strin
   if (!songId) return <>{songName}</>;
 
   return (
-    <Link href={`/songs/${songId}`} className="text-blue-600 hover:underline">
+    <Link href={`/songs/${songId}`} className="link-rc">
       {songName}
     </Link>
   );
@@ -159,7 +159,7 @@ export default function OccurrenceTable({ occurrences }: { occurrences: SongOccu
                 <button
                   type="button"
                   onClick={() => handleSort(column.key)}
-                  className="inline-flex items-center gap-1 hover:text-blue-600"
+                  className="inline-flex items-center gap-1 hover:text-rc-teal"
                 >
                   <span>{column.label}</span>
                   <span className="text-xs text-gray-400">{sortIndicator(column.key)}</span>
@@ -175,7 +175,7 @@ export default function OccurrenceTable({ occurrences }: { occurrences: SongOccu
               className="border-b border-gray-200 last:border-b-0"
             >
               <td className="px-3 py-3 whitespace-nowrap">
-                <Link href={`/shows/${occurrence.show_id}`} className="text-blue-600 hover:underline">
+                <Link href={`/shows/${occurrence.show_id}`} className="link-rc">
                   {formatDate(occurrence.show_date)}
                 </Link>
                 <div className="text-xs text-gray-500 mt-0.5 max-w-[12rem] truncate" title={occurrence.show_venue}>

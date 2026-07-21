@@ -6,7 +6,7 @@ interface StatCardProps {
 
 export default function StatCard({ label, value, detail }: StatCardProps) {
   return (
-    <div className="p-4 border border-gray-200 rounded-lg shadow-sm text-center">
+    <div className="p-4 border border-gray-200 border-t-2 border-t-rc-cyan rounded-lg shadow-sm text-center bg-white/60">
       <p className="text-2xl sm:text-3xl font-bold text-gray-900">
         {typeof value === 'number' ? value.toLocaleString('en-US') : value}
       </p>

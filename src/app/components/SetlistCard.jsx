@@ -29,7 +29,7 @@ export default function SetlistCard({ setlist, setlistTitle }) {
           return (
             <Typography key={`${song.song_name}-${idx}`} level="body-sm" component="span">
               {song.song_id ? (
-                <Link href={`/songs/${song.song_id}`} className="text-blue-600 hover:underline">
+                <Link href={`/songs/${song.song_id}`} className="link-rc">
                   {song.song_name}
                 </Link>
               ) : (

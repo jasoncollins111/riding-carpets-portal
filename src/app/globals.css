@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --rc-navy: #2b4b8c;
+    --rc-cyan: #4db8e8;
+    --rc-orange: #f5a020;
+    --rc-teal: #008b8b;
+    --rc-cream: #fbf8f4;
+  }
+
+  body {
+    background-color: var(--rc-cream);
+  }
+}
+
+@layer components {
+  .link-rc {
+    @apply text-rc-navy hover:text-rc-teal hover:underline;
+  }
+}

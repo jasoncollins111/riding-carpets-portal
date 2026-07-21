@@ -26,13 +26,13 @@ export default function RankedList({
     <ol className="space-y-2">
       {items.map((item, index) => (
         <li key={item.id} className="flex items-baseline gap-3">
-          <span className="text-gray-400 text-sm w-5 text-right shrink-0">
+          <span className={`text-sm w-5 text-right shrink-0 ${index === 0 ? 'text-rc-orange font-medium' : 'text-gray-400'}`}>
             {index + 1}.
           </span>
           <div className="flex-1 min-w-0">
             <Link
               href={`/songs/${item.id}`}
-              className="text-blue-600 hover:underline break-words"
+              className="link-rc break-words"
             >
               {item.song}
             </Link>

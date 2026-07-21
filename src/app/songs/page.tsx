@@ -49,7 +49,7 @@ export default function SongsPage() {
           <Link
             key={song.id}
             href={`/songs/${song.id}`}
-            className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow block"
+            className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-rc-cyan/40 transition-all block bg-white/60"
           >
             <h2 className="text-xl font-semibold">{song.song}</h2>
             <p className="text-sm text-gray-500 mt-1">
