@@ -1,7 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 import RecentSetlists from './RecentSetlists.jsx';
 
@@ -18,7 +17,7 @@ describe('RecentSetlists', () => {
     expect(screen.getByText('Loading concerts...')).toBeInTheDocument();
   });
 
-  it('renders concerts after fetch', async () => {
+  it('renders concerts and setlists after fetch', async () => {
     vi.mocked(axios.get)
       .mockResolvedValueOnce({
         data: {
@@ -35,13 +34,11 @@ describe('RecentSetlists', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Red Rocks/)).toBeInTheDocument();
+      expect(screen.getByText(/Terrapin/)).toBeInTheDocument();
     });
 
-    const summary = screen.getByText(/Red Rocks/);
-    await userEvent.click(summary);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Terrapin/)).toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledWith('/api/get-concerts', {
+      params: { limit: 10 },
     });
   });
 
@@ -53,7 +50,7 @@ describe('RecentSetlists', () => {
     render(<RecentSetlists />);
 
     await waitFor(() => {
-      expect(screen.getByText('No concerts for this year.')).toBeInTheDocument();
+      expect(screen.getByText('No concerts found.')).toBeInTheDocument();
     });
   });
 });

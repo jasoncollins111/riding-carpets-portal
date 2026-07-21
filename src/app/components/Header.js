@@ -17,6 +17,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 const LOGO_HEIGHT = 43;
+const LOGO_SRC = '/riding-carpets-logo.png';
+const LOGO_WIDTH = 613;
+const LOGO_HEIGHT_PX = 150;
 
 const pages = [
   { link: '/', title: 'Setlists' },
@@ -55,10 +58,10 @@ export default function Header() {
       <Box sx={{ px: 2, py: 1.5 }}>
         <Link href="/" onClick={handleCloseMobile} sx={{ display: 'inline-block' }}>
           <Image
-            src="/logo.png"
+            src={LOGO_SRC}
             alt="Riding Carpets"
-            width={168}
-            height={48}
+            width={LOGO_WIDTH}
+            height={LOGO_HEIGHT_PX}
             style={{ height: `${LOGO_HEIGHT}px`, width: 'auto' }}
             priority
           />
@@ -126,10 +129,10 @@ export default function Header() {
             }}
           >
             <Image
-              src="/logo.png"
+              src={LOGO_SRC}
               alt="Riding Carpets"
-              width={192}
-              height={53}
+              width={LOGO_WIDTH}
+              height={LOGO_HEIGHT_PX}
               style={{ height: `${LOGO_HEIGHT}px`, width: 'auto' }}
               priority
             />

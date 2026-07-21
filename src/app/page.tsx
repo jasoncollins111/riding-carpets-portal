@@ -1,6 +1,5 @@
 import {
   Box,
-  Typography,
 } from '@mui/joy';
 
 import RecentSetlists from './components/RecentSetlists';
@@ -16,9 +15,6 @@ export default function Home() {
           mx: 'auto',
         }}
       >
-        <Typography level="h1" sx={{ mb: 3 }}>
-          Setlists
-        </Typography>
         <RecentSetlists />
       </Box>
     </Box>
