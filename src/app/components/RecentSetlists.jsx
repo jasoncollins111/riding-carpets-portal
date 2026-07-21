@@ -136,12 +136,25 @@ export default function RecentSetlists() {
       {!concertList.length ? (
         <Typography level="body-md">No concerts for this year.</Typography>
       ) : (
-        <AccordionGroup>
+        <AccordionGroup
+          sx={{
+            '& .MuiAccordion-root': {
+              bgcolor: 'var(--rc-cream)',
+              backgroundColor: 'var(--rc-cream)',
+            },
+          }}
+        >
           {concertList.map(({ concert, setlist }) => {
             const setGroups = groupBySetName(setlist);
             return (
-              <Accordion key={concert.id}>
-                <AccordionSummary>
+              <Accordion
+                key={concert.id}
+                sx={{
+                  bgcolor: 'var(--rc-cream)',
+                  backgroundColor: 'var(--rc-cream)',
+                }}
+              >
+                <AccordionSummary sx={{ bgcolor: 'var(--rc-cream)' }}>
                   <Box sx={{ minWidth: 0 }}>
                     <Typography level="title-md">{formatDate(concert.date)}</Typography>
                     <Typography level="body-md" sx={{ color: 'text.secondary', wordBreak: 'break-word' }}>
@@ -150,7 +163,7 @@ export default function RecentSetlists() {
                     </Typography>
                   </Box>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ bgcolor: 'var(--rc-cream)' }}>
                   {setGroups.map((group) => (
                     <SetlistCard
                       key={`${concert.id}-${group.title}`}

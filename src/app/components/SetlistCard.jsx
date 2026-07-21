@@ -9,7 +9,7 @@ export default function SetlistCard({ setlist, setlistTitle }) {
       <Typography level="title-sm" sx={{ mb: 0.5 }}>
         {setlistTitle}
       </Typography>
-      <Sheet sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+      <Sheet sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, bgcolor: 'var(--rc-cream)', boxShadow: 'none' }}>
         {setlist.map((song, idx) => {
           let songTransitionSymbol = ',\u00A0';
           if (song.segue) {
