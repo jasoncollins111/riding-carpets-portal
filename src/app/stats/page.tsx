@@ -49,8 +49,8 @@ interface StatsData {
   current_droughts: CurrentDrought[];
 }
 
-const SET_ORDER = ['Set I', 'Set II', 'Setlist'];
-const EXCLUDED_SETS = new Set(['Set III', 'Set IV', 'Encore']);
+const SET_ORDER = ['Set I', 'Set II'];
+const EXCLUDED_SETS = new Set(['Set III', 'Set IV', 'Encore', 'Setlist']);
 
 function orderedSetNames(
   openers: Record<string, RankedSong[]>,
